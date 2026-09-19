@@ -403,7 +403,15 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 @media (max-width:520px){.portrait .tag{left:8px}.portrait .plate{inset:-14px}}
 
 /* ============ 06 CASES ============ */
-#cases .lede{max-width:64ch;margin-bottom:clamp(40px,6vw,72px);font-size:clamp(18px,2vw,27px);line-height:1.42;color:var(--cream);font-family:var(--fd);font-weight:500;letter-spacing:-.01em}
+/* Abertura da seção como entrada editorial, não como título.
+   Estava em Unbounded a 27px, a mesma fonte dos títulos, sozinha no
+   escuro: lia como subtítulo grande e genérico. Agora é texto, em
+   Montserrat, com uma etiqueta à esquerda que diz o que vem a seguir. */
+#cases .casetop{display:grid;grid-template-columns:minmax(0,.2fr) minmax(0,1fr);gap:clamp(16px,3vw,50px);
+  align-items:start;padding-bottom:clamp(28px,4vw,50px)}
+@media (max-width:760px){#cases .casetop{grid-template-columns:1fr;gap:12px}}
+#cases .casetop .k{font:600 10.5px/1.5 var(--ft);letter-spacing:.2em;text-transform:uppercase;color:var(--o3);padding-top:5px;white-space:nowrap}
+#cases .lede{max-width:50ch;margin:0;font:500 clamp(16px,1.4vw,20.5px)/1.52 var(--ft);letter-spacing:0;color:#D3C9C0;text-wrap:pretty}
 /* As duas colunas começam na mesma linha de topo. Centralizadas, cada
    case assentava numa altura diferente e a página parecia desalinhada. */
 .bigcase{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(24px,4vw,64px);align-items:start;
@@ -488,9 +496,21 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 .clip.tilt{transform:rotate(-1.1deg)}
 .clip.tilt2{transform:rotate(.9deg)}
 .side{display:grid;gap:clamp(14px,2vw,22px)}
-.pull{border-top:2px solid var(--ink);border-bottom:1px solid rgba(23,18,14,.2);padding:20px 0;font-family:var(--fd);font-weight:500;font-size:clamp(16px,1.8vw,22px);line-height:1.35;letter-spacing:-.01em}
-.pull em{font-style:normal;color:var(--o4)}
-.pull cite{display:block;margin-top:12px;font:500 11px/1 var(--ft);letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-style:normal}
+/* a repercussão no celular: a foto e a frase dentro da tela,
+   que é onde essa história aconteceu de verdade */
+.fone{margin:0;display:grid;justify-items:center}
+.fone .aparelho{position:relative;width:min(236px,80%);padding:9px;border-radius:32px;background:#121110;
+  transform:rotate(-1.4deg);transition:transform .7s cubic-bezier(.2,.7,.2,1);
+  box-shadow:0 34px 64px -30px rgba(23,18,14,.62),0 0 0 1px rgba(23,18,14,.18),inset 0 0 0 1px rgba(255,255,255,.09)}
+.fone:hover .aparelho{transform:rotate(0deg) translateY(-5px)}
+.fone .alto{position:absolute;top:15px;left:50%;transform:translateX(-50%);width:54px;height:4px;border-radius:4px;background:#2E2C2A;z-index:3}
+.fone .tela{position:relative;border-radius:24px;overflow:hidden;background:#0A0908;padding-top:27px}
+.fone .tela .slot{aspect-ratio:1;border-radius:0}
+.fone .post{padding:14px 14px 18px;color:#E9DFD6}
+.fone .post p{margin:0;font:500 11.5px/1.52 var(--ft)}
+.fone .post em{font-style:normal;color:var(--o3)}
+.fone .post span{display:block;margin-top:10px;font:600 8.5px/1.5 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:rgba(233,223,214,.5)}
+@media (prefers-reduced-motion:reduce){.fone .aparelho,.fone:hover .aparelho{transform:none;transition:none}}
 .colnote{columns:1;font-size:13.5px;line-height:1.7;color:var(--ink-2)}
 .colnote p+p{margin-top:12px}
 
@@ -667,7 +687,10 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
 <!-- ===== 06 CASES ===== -->
 <section id="cases" class="dark pad">
   <div class="wrap">
-    <p class="lede rv">Um personagem pode aparecer em uma festa, mas também pode parar um shopping, rodar nas redes sociais e <span class="grad">triplicar o fluxo de um cinema ou de sua loja</span>.</p>
+    <div class="casetop rv">
+      <span class="k">Quatro provas</span>
+      <p class="lede">Um personagem não fica só na festa. Ele para um shopping, roda nas redes e <span class="grad">triplica o fluxo de um cinema ou de uma loja</span>.</p>
+    </div>
     <div id="caseList"></div>
   </div>
 </section>
@@ -704,7 +727,18 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
             <p>A exposição no Pátio Cianê Shopping rendeu imagem e nota na televisão.</p>
           </div>
         </div>
-        <blockquote class="pull rv">Os dois Pennywise da Navart foram publicados no <em>Instagram oficial da Warner Bros.</em> e na página Lenda Urbana, com quase 2 milhões de seguidores.<cite>Premiere de IT · Rua Augusta, São Paulo</cite></blockquote>
+        <figure class="fone rv">
+          <div class="aparelho">
+            <i class="alto" aria-hidden="true"></i>
+            <div class="tela">
+              <div class="slot" data-slot="midia-pennywise" data-label="Os dois Pennywise na premiere de IT" data-kind="image"></div>
+              <figcaption class="post">
+                <p>Os dois Pennywise da Navart foram publicados no <em>Instagram oficial da Warner Bros.</em> e na página Lenda Urbana, com quase 2 milhões de seguidores.</p>
+                <span>Premiere de IT · Rua Augusta, São Paulo</span>
+              </figcaption>
+            </div>
+          </div>
+        </figure>
         <div class="colnote rv">
           <p>Em Sorocaba e em São Paulo, as ações da Navart circularam por jornal, televisão e pelos perfis oficiais das marcas envolvidas.</p>
           <p>O alcance somado dos vídeos nas redes passa de 300 mil visualizações, sem investimento em mídia paga.</p>
@@ -866,7 +900,7 @@ const BRANDS=[
 ];
 const LOGOS=["logo-unimed","logo-coca-cola","logo-3m","logo-objetivo","logo-apsen","logo-morumbi-town-shopping","logo-granja-vianna-shopping","logo-metro-tucuruvi-shopping","logo-d-shopping","logo-cine-araujo","logo-deck-beach","logo-folks-pub","logo-urla","logo-atletica-araras","logo-edub-two","logo-festa-julina-de-sorocaba"];
 const STATIC={
- paulo:"paulo.jpg","midia-freira":"case-freira.jpg","midia-sereia":"midia-sereia.jpg",
+ paulo:"paulo.jpg","midia-freira":"case-freira.jpg","midia-sereia":"midia-sereia.jpg","midia-pennywise":"hall-pennywise.jpg",
  "cal-jan":"reveillon.jpg","cal-fevmar":"carnaval.jpg","cal-abr":"pascoa.jpg","cal-mai":"star-wars.jpg","cal-jun":"festa-junina.jpg",
  "cal-jul":"festa-julina.jpg","cal-ago":"ludico.jpg","cal-set":"pintura-facial.jpg","cal-out":"halloween-juvenil.jpg",
  "cal-nov":"natal-i.jpg","cal-dez":"natal-ii.jpg",
