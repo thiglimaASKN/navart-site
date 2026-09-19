@@ -443,9 +443,12 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 @media (max-width:560px){.brand .in{max-width:78%}}
 /* todo logo em placa clara e nas cores reais. O invert para branco
    virava um bloco chapado, porque os arquivos têm fundo branco. */
-.brand .mark{height:clamp(44px,3.4vw,58px);width:auto;max-width:192px;object-fit:contain;object-position:center;
-  filter:none;background:#FEF5F4;padding:9px 13px;border-radius:6px;justify-self:start;
+/* placa de tamanho fixo: os arquivos têm proporções muito diferentes,
+   e deixar a largura livre fazia cada cartão exibir um selo de outro tamanho */
+.brand .mark{height:58px;width:146px;object-fit:contain;object-position:center;
+  filter:none;background:#FEF5F4;padding:8px 12px;border-radius:6px;justify-self:start;
   box-shadow:0 12px 28px -16px rgba(0,0,0,.95)}
+@media (max-width:560px){.brand .mark{height:48px;width:120px;padding:7px 10px}}
 .brand h4{font-family:var(--fd);font-size:clamp(15px,1.5vw,20px);font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:1.12}
 .brand p{font-size:13px;line-height:1.55;color:#BDB3AA}
 /* cartão largo de fechamento: a legenda desce para a base, em vez de
