@@ -444,25 +444,23 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
    desfocadas, cada uma menor, mais escura e mais lenta que a da frente,
    com a luz vindo de cima como a de um projetor. A profundidade nasce
    da diferença entre elas, não do contorno de cada uma. */
+/* A sala é desenhada em canvas, com projeção em perspectiva de verdade.
+   O CSS aqui cuida só da luz de ambiente por cima: o brilho da tela,
+   a névoa do projetor e o grão. O resto vem do script. */
 .plateia{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.plateia .feixe{position:absolute;top:-16%;left:50%;width:78%;height:86%;transform:translateX(-50%);
-  background:conic-gradient(from 180deg at 50% 0%,transparent 42%,rgba(255,238,206,.09) 50%,transparent 58%);
-  filter:blur(38px);opacity:.75;animation:respiraFeixe 15s ease-in-out infinite}
-@keyframes respiraFeixe{0%,100%{opacity:.5}50%{opacity:.9}}
-.plateia .fila{position:absolute;left:-12%;right:-12%;will-change:transform;
-  background-repeat:repeat-x;background-position:center bottom}
-/* a silhueta de um encosto: uma cúpula, repetida na horizontal */
-.plateia .f1{bottom:-4%;height:26%;background-image:radial-gradient(56% 100% at 50% 100%,#000 62%,transparent 64%);
-  background-size:190px 108px;filter:blur(3px);opacity:.92}
-.plateia .f2{bottom:9%;height:21%;background-image:radial-gradient(56% 100% at 50% 100%,#040404 62%,transparent 64%);
-  background-size:150px 86px;filter:blur(5px);opacity:.72}
-.plateia .f3{bottom:19%;height:17%;background-image:radial-gradient(56% 100% at 50% 100%,#070707 62%,transparent 64%);
-  background-size:118px 68px;filter:blur(7px);opacity:.5}
-.plateia .f4{bottom:27%;height:13%;background-image:radial-gradient(56% 100% at 50% 100%,#0A0A0A 62%,transparent 64%);
-  background-size:94px 54px;filter:blur(9px);opacity:.32}
-/* brilho baixo que lambe o topo dos encostos, como reflexo da tela */
-.plateia .rebordo{position:absolute;left:0;right:0;bottom:0;height:46%;
-  background:linear-gradient(0deg,rgba(249,178,51,.07),transparent 62%)}
+.plateia canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.plateia .telaluz{position:absolute;top:-22%;left:50%;width:120%;height:74%;transform:translateX(-50%);
+  background:radial-gradient(52% 58% at 50% 0%,rgba(255,232,196,.15),rgba(249,178,51,.05) 46%,transparent 74%);
+  filter:blur(26px);animation:cintila 9s ease-in-out infinite}
+@keyframes cintila{0%,100%{opacity:.72}37%{opacity:.95}61%{opacity:.8}}
+.plateia .feixe{position:absolute;top:-30%;left:50%;width:62%;height:96%;transform:translateX(-50%) rotate(.6deg);
+  background:conic-gradient(from 180deg at 50% 0%,transparent 43%,rgba(255,238,206,.075) 50%,transparent 57%);
+  filter:blur(30px);animation:respiraFeixe 17s ease-in-out infinite}
+@keyframes respiraFeixe{0%,100%{opacity:.45;transform:translateX(-50%) rotate(.6deg)}
+  50%{opacity:.85;transform:translateX(-50%) rotate(-.7deg)}}
+.plateia .grao{position:absolute;inset:0;opacity:.055;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/></filter><rect width='150' height='150' filter='url(%23g)'/></svg>")}
+@media (prefers-reduced-motion:reduce){.plateia .telaluz,.plateia .feixe{animation:none}}
 
 /* ---- LED arquitetônico: fios que amarram as partes da instalação ---- */
 .ledfio{position:relative;height:1px;background:rgba(254,245,244,.1);overflow:hidden}
@@ -491,6 +489,16 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
   filter:none;background:#FEF5F4;padding:8px 12px;border-radius:6px;justify-self:start;
   box-shadow:0 12px 28px -16px rgba(0,0,0,.95)}
 @media (max-width:560px){.brand .mark{height:48px;width:120px;padding:7px 10px}}
+/* assinatura de duas marcas: os dois selos ligados por um fio de LED,
+   para lerem como uma parceria e não como dois logos encostados */
+.brand .duplo{display:flex;align-items:center;gap:0;justify-self:start}
+.brand .duplo .mark{justify-self:auto}
+.brand .duplo .elo{width:clamp(22px,2.4vw,38px);height:1px;flex:0 0 auto;position:relative;
+  background:linear-gradient(90deg,rgba(254,245,244,.16),var(--o3),rgba(254,245,244,.16))}
+.brand .duplo .elo::after{content:"";position:absolute;top:-2px;left:50%;width:5px;height:5px;margin-left:-2.5px;
+  border-radius:50%;background:var(--o4);box-shadow:0 0 9px var(--o4),0 0 20px rgba(240,114,58,.55)}
+.brand h4 i{font-style:normal;font-weight:400;opacity:.5;padding-inline:2px}
+@media (max-width:560px){.brand .duplo .mark{height:40px;width:98px}}
 .brand h4{font-family:var(--fd);font-size:clamp(15px,1.5vw,20px);font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:1.12}
 .brand p{font-size:13px;line-height:1.55;color:#BDB3AA}
 /* cartão largo de fechamento: a legenda desce para a base, em vez de
@@ -811,10 +819,10 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
 <!-- ===== 07 MARCAS ===== -->
 <section id="marcas" class="dark pad">
   <div class="plateia" aria-hidden="true">
+    <canvas id="sala"></canvas>
     <i class="feixe"></i>
-    <i class="fila f4" id="fila4"></i><i class="fila f3" id="fila3"></i>
-    <i class="fila f2" id="fila2"></i><i class="fila f1" id="fila1"></i>
-    <i class="rebordo"></i>
+    <i class="telaluz"></i>
+    <i class="grao"></i>
   </div>
   <div class="wrap">
     <h2 class="h-lg rv" style="margin-bottom:30px">Marcas que entraram na história</h2>
@@ -1030,7 +1038,8 @@ const BRANDS=[
  {logo:"logo-cinemark.jpg",slot:"geek-pantera2.jpg",n:"Cinemark",p:"Pantera Negra, O Grinch e Han Solo nas estreias do Shopping D e do Metrô Tucuruvi.",keep:true},
  {logo:"logo-piticas.jpg",slot:"geek-piticas",n:"Piticas",p:"The Walking Dead e Star Wars no lançamento das coleções de camisetas."},
  {logo:"logo-shell-open-air.jpg",slot:"hall-balloons",n:"Shell Open Air",p:"O palhaço de IT no maior cinema a céu aberto do país, no Jockey Club."},
- {logo:"logo-fanta.jpg",slot:"fanta-beetlejuice.jpg",n:"Fanta",p:"Beetlejuice e os fantasmas da campanha Fantasmas Divertidos, na ativação de estreia do filme.",keep:true,wide:true}
+ {logo:"logo-fanta.jpg",logo2:"logo-coca-cola.png",slot:"fanta-beetlejuice.jpg",n:"Fanta",n2:"Coca-Cola",
+  p:"Beetlejuice e os fantasmas da campanha Fantasmas Divertidos, na ativação de estreia do filme.",keep:true,wide:true}
 ];
 const LOGOS=["logo-unimed","logo-coca-cola","logo-3m","logo-objetivo","logo-apsen","logo-morumbi-town-shopping","logo-granja-vianna-shopping","logo-metro-tucuruvi-shopping","logo-d-shopping","logo-cine-araujo","logo-deck-beach","logo-folks-pub","logo-urla","logo-atletica-araras","logo-edub-two","logo-festa-julina-de-sorocaba"];
 const STATIC={
@@ -1168,8 +1177,16 @@ const body=document.body,RM=matchMedia("(prefers-reduced-motion: reduce)").match
 (function(){
   const r=document.getElementById("brandrow");
   BRANDS.forEach((b,i)=>{const d=document.createElement("div");d.className="brand"+(b.wide?" wide":"");
+    /* quando a ativação é de duas marcas, elas entram numa única
+       assinatura: a principal, um fio de LED e a segunda em seguida */
+    const selo=b.logo2
+      ? '<div class="duplo"><img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy">'
+        +'<i class="elo" aria-hidden="true"></i>'
+        +'<img class="mark" src="img/'+b.logo2+'" alt="'+b.n2+'" loading="lazy"></div>'
+      : '<img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy">';
+    const titulo=b.logo2?(b.n+' <i>e</i> '+b.n2):b.n;
     d.innerHTML='<div class="slot" data-slot="brand-'+i+'" data-label="'+b.n+'" data-kind="image"></div><div class="shade"></div>'+
-      '<div class="in"><img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy"><h4>'+b.n+'</h4><p>'+b.p+'</p></div>';
+      '<div class="in">'+selo+'<h4>'+titulo+'</h4><p>'+b.p+'</p></div>';
     r.appendChild(d);});
   /* a película: dois rolos, cada um com metade dos clientes.
      O conteúdo é duplicado porque a animação anda -50%: ao chegar lá,
@@ -1325,13 +1342,7 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
     {el:document.getElementById("staffContent"),sec:document.getElementById("staff"),f:-.2,fade:true},
     {el:document.getElementById("dirAura"),sec:document.getElementById("diretor"),f:.12},
     {el:document.getElementById("portrait"),sec:document.getElementById("diretor"),f:-.11},
-    {el:document.getElementById("dirTxt"),sec:document.getElementById("diretor"),f:.05},
-    /* a plateia: a fileira da frente anda bem mais que a do fundo.
-       É essa diferença que faz a sala parecer ter comprimento. */
-    {el:document.getElementById("fila1"),sec:document.getElementById("marcas"),f:.22},
-    {el:document.getElementById("fila2"),sec:document.getElementById("marcas"),f:.15},
-    {el:document.getElementById("fila3"),sec:document.getElementById("marcas"),f:.09},
-    {el:document.getElementById("fila4"),sec:document.getElementById("marcas"),f:.05}
+    {el:document.getElementById("dirTxt"),sec:document.getElementById("diretor"),f:.05}
   ].filter(i=>i.el&&i.sec);
   /* cursor sobre o hero: alvo e valor suavizado, de -1 a 1 */
   const hero=document.getElementById("hero"),luz=document.getElementById("heroLuz");
@@ -1434,6 +1445,230 @@ if(location.hash.startsWith("#atracao/")){setTimeout(()=>{start();openAttr(locat
     function step(t){const p=Math.min(1,(t-t0)/D),v=end*(1-Math.pow(1-p,3));el.textContent=pre+v.toFixed(dec).replace(".",",")+suf;if(p<1)requestAnimationFrame(step);}
     requestAnimationFrame(step);});},{threshold:.5});
   document.querySelectorAll("[data-count]").forEach(el=>o.observe(el));
+})();
+
+/* =================== A SALA: plateia em perspectiva ========================
+   Nove fileiras de poltronas e silhuetas, projetadas por uma câmera virtual.
+   Duas decisões sustentam o resultado:
+
+   1. O parallax não é inventado. Cada fileira tem uma profundidade z e a
+      escala cai com 1/(1+z). Mover a câmera um passo desloca a fileira da
+      frente muito mais que a do fundo, porque é isso que a projeção faz.
+      Não há fator de velocidade escrito à mão em lugar nenhum.
+
+   2. O que está longe é assado uma vez, já desfocado, num canvas próprio.
+      Desfocar a cada quadro custaria caro e ninguém veria diferença: quem
+      está no fundo está borrado de qualquer jeito. As duas fileiras da
+      frente são desenhadas ao vivo, com a respiração de cada pessoa.
+   =========================================================================== */
+(function(){
+  const cv=document.getElementById("sala"),sec=document.getElementById("marcas");
+  if(!cv||!sec)return;
+  const ctx=cv.getContext("2d");
+  if(!ctx)return;
+
+  const FILAS=9, FOCO=1.15;
+  let W=0,H=0,DPR=1,fileiras=[],visivel=false,laco=null,t0=performance.now();
+
+  /* semente fixa: a mesma sala a cada carregamento, nunca um sorteio novo */
+  let sem=20160;
+  const rnd=()=>{sem=(sem*1103515245+12345)&0x7fffffff;return sem/0x7fffffff;};
+
+  /* ---------- desenho de uma poltrona vista por trás ---------- */
+  function poltrona(c,x,base,larg,alt,luz){
+    const r=Math.min(larg*.26,alt*.5);
+    c.beginPath();
+    c.moveTo(x-larg/2,base);
+    c.lineTo(x-larg/2,base-alt+r);
+    c.quadraticCurveTo(x-larg/2,base-alt,x-larg/2+r,base-alt);
+    c.lineTo(x+larg/2-r,base-alt);
+    c.quadraticCurveTo(x+larg/2,base-alt,x+larg/2,base-alt+r);
+    c.lineTo(x+larg/2,base);
+    c.closePath();
+    const g=c.createLinearGradient(0,base-alt,0,base);
+    g.addColorStop(0,"#1d1714");g.addColorStop(.5,"#0e0b0a");g.addColorStop(1,"#050404");
+    c.fillStyle=g;c.fill();
+    /* fio de luz da tela na aresta de cima do encosto */
+    c.beginPath();
+    c.moveTo(x-larg/2+r*.7,base-alt+.9);c.lineTo(x+larg/2-r*.7,base-alt+.9);
+    c.lineWidth=Math.max(.8,larg*.016);
+    c.strokeStyle="rgba(255,228,186,"+(.22*luz).toFixed(3)+")";c.stroke();
+  }
+
+  /* ---------- silhueta de uma pessoa ---------- */
+  function pessoa(c,x,base,alt,larg,incl,luz,cab){
+    c.save();c.translate(x,base);c.rotate(incl);
+    const rc=alt*cab, oy=-rc*1.5;
+    c.beginPath();
+    c.moveTo(-larg/2,0);
+    c.quadraticCurveTo(-larg/2,oy,-rc*.98,oy-rc*.2);
+    c.quadraticCurveTo(0,oy-rc*.95,rc*.98,oy-rc*.2);
+    c.quadraticCurveTo(larg/2,oy,larg/2,0);
+    c.closePath();
+    c.fillStyle="#040303";c.fill();
+    c.beginPath();c.ellipse(0,oy-rc*.66,rc*.84,rc,0,0,6.2832);
+    c.fillStyle="#040303";c.fill();
+    /* recorte de luz: a tela ilumina o alto da cabeça e um ombro */
+    c.beginPath();c.ellipse(0,oy-rc*.66,rc*.84,rc,0,Math.PI*1.12,Math.PI*1.92);
+    c.lineWidth=Math.max(.7,rc*.15);
+    c.strokeStyle="rgba(255,224,178,"+(.3*luz).toFixed(3)+")";c.stroke();
+    c.beginPath();c.moveTo(-larg/2,0);c.quadraticCurveTo(-larg/2,oy,-rc*.98,oy-rc*.2);
+    c.lineWidth=Math.max(.6,rc*.11);
+    c.strokeStyle="rgba(249,178,51,"+(.16*luz).toFixed(3)+")";c.stroke();
+    c.restore();
+  }
+
+  /* ---------- monta as fileiras e assa as de trás ---------- */
+  function montar(){
+    const r=cv.getBoundingClientRect();
+    DPR=Math.min(2,devicePixelRatio||1);
+    W=Math.max(1,Math.round(r.width));H=Math.max(1,Math.round(r.height));
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    sem=20160;fileiras=[];
+    const horizonte=H*.30, largBase=W*.17;
+    for(let i=0;i<FILAS;i++){
+      const z=(FILAS-1-i)*.42;              /* i=0 é a mais distante */
+      const e=FOCO/(FOCO+z);
+      const larg=largBase*e, alt=larg*.72;
+      const base=horizonte+(H*1.02-horizonte)*Math.pow(e,1.32);
+      const n=Math.ceil(W/larg)+5;
+      const gente=[];
+      for(let k=0;k<n;k++){
+        const temGente=rnd()<.68;
+        gente.push(temGente?{
+          desloc:(rnd()-.5)*larg*.16,
+          alt:alt*(.86+rnd()*.3),
+          larg:larg*(.62+rnd()*.2),
+          cab:.30+rnd()*.07,
+          fase:rnd()*6.2832,
+          ritmo:.5+rnd()*.7,
+          balanco:(.006+rnd()*.012)
+        }:null);
+      }
+      fileiras.push({z,e,larg,alt,base,n,gente,
+        desfoque:Math.max(0,(FILAS-2-i)*1.15),
+        luz:.35+ .65*Math.pow(e,.8),
+        vivo:i>=FILAS-2, off:null});
+    }
+    /* assa as fileiras de trás, já com o desfoque embutido */
+    for(const f of fileiras){
+      if(f.vivo)continue;
+      const marg=Math.ceil(f.larg*2.5+f.desfoque*4);
+      const ow=Math.ceil((W+marg*2)*DPR), oh=Math.ceil((f.alt*2.6+f.desfoque*4)*DPR);
+      const o=document.createElement("canvas");o.width=ow;o.height=oh;
+      const c=o.getContext("2d");c.scale(DPR,DPR);
+      if(f.desfoque>0&&"filter" in c)c.filter="blur("+f.desfoque.toFixed(2)+"px)";
+      const baseLocal=oh/DPR-f.desfoque*2-2;
+      for(let k=0;k<f.n;k++){
+        const x=marg+ (k-2)*f.larg + f.larg/2;
+        const p=f.gente[k];
+        if(p)pessoa(c,x+p.desloc,baseLocal-f.alt*.86,p.alt,p.larg,0,f.luz,p.cab);
+        poltrona(c,x,baseLocal,f.larg*.94,f.alt,f.luz);
+      }
+      f.off=o;f.offMarg=marg;f.offBase=baseLocal;
+    }
+  }
+
+  /* ---------- câmera ---------- */
+  let alvoX=0,alvoY=0,camX=0,camY=0,avanco=0,alvoAvanco=0;
+  sec.addEventListener("pointermove",e=>{
+    const r=sec.getBoundingClientRect();
+    alvoX=Math.max(-1,Math.min(1,((e.clientX-r.left)/r.width)*2-1));
+    alvoY=Math.max(-1,Math.min(1,((e.clientY-r.top)/r.height)*2-1));
+    acorda();},{passive:true});
+  sec.addEventListener("pointerleave",()=>{alvoX=0;alvoY=0;acorda();},{passive:true});
+
+  function medeRolagem(){
+    const r=sec.getBoundingClientRect(),vh=innerHeight;
+    alvoAvanco=Math.max(-1,Math.min(1,(vh/2-(r.top+r.height/2))/vh));
+  }
+
+  /* ---------- quadro ---------- */
+  function quadro(agora){
+    laco=null;
+    const t=(agora-t0)/1000;
+    /* a câmera persegue o alvo com atraso, e nunca para de respirar */
+    const derivaX=Math.sin(t*.13)*.34+Math.sin(t*.057)*.2;
+    const derivaY=Math.sin(t*.091)*.22;
+    camX+=((alvoX+derivaX)-camX)*.045;
+    camY+=((alvoY*.5+derivaY)-camY)*.045;
+    avanco+=(alvoAvanco-avanco)*.06;
+
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    /* travelling: o avanço aproxima a sala um pouco */
+    const dolly=1+avanco*.085;
+    const cx=W/2;
+
+    for(let i=0;i<FILAS;i++){
+      const f=fileiras[i];
+      /* deslocamento pela projeção: quanto mais perto, mais anda */
+      const dx=-camX*W*.075*f.e*dolly;
+      const dy=-camY*H*.028*f.e + avanco*H*.05*f.e;
+      if(f.off){
+        const w=f.off.width/DPR,h=f.off.height/DPR;
+        const escala=dolly*(1+avanco*.03*f.e);
+        ctx.save();
+        ctx.translate(cx+dx,f.base+dy);
+        ctx.scale(escala,escala);
+        ctx.drawImage(f.off,-cx-f.offMarg,-f.offBase,w,h);
+        ctx.restore();
+      }else{
+        const base=f.base+dy, larg=f.larg*dolly;
+        ctx.save();
+        for(let k=0;k<f.n;k++){
+          const x=cx+dx+(k-f.n/2)*larg+larg/2;
+          if(x<-larg||x>W+larg)continue;
+          const p=f.gente[k];
+          if(p){
+            /* respiração: cada pessoa oscila no seu próprio compasso */
+            const osc=Math.sin(t*p.ritmo+p.fase);
+            pessoa(ctx,x+p.desloc*dolly,base-f.alt*.86*dolly+osc*1.1,
+                   p.alt*dolly,p.larg*dolly,osc*p.balanco,f.luz,p.cab);
+          }
+          poltrona(ctx,x,base,larg*.94,f.alt*dolly,f.luz);
+        }
+        ctx.restore();
+      }
+      /* névoa entre as fileiras: o ar da sala engolindo o que está atrás */
+      if(i<FILAS-1){ctx.fillStyle="rgba(9,7,6,.13)";ctx.fillRect(0,0,W,H);}
+    }
+
+    /* pontos de LED nos degraus do corredor, acompanhando a câmera */
+    for(let i=1;i<FILAS;i+=2){
+      const f=fileiras[i];
+      const pulso=.55+.45*Math.sin(t*.9+i*1.3);
+      for(const lado of [-1,1]){
+        const x=cx-camX*W*.075*f.e*dolly+lado*(W*.40*f.e+W*.09);
+        const y=f.base-f.alt*.24;
+        const g=ctx.createRadialGradient(x,y,0,x,y,16*f.e+7);
+        g.addColorStop(0,"rgba(255,206,140,"+(.5*pulso*f.luz).toFixed(3)+")");
+        g.addColorStop(.4,"rgba(240,114,58,"+(.2*pulso*f.luz).toFixed(3)+")");
+        g.addColorStop(1,"rgba(240,114,58,0)");
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,16*f.e+7,0,6.2832);ctx.fill();
+      }
+    }
+    if(visivel)laco=requestAnimationFrame(quadro);
+  }
+  const acorda=()=>{if(visivel&&!laco)laco=requestAnimationFrame(quadro);};
+
+  /* só gasta quadro quando a seção está à vista */
+  new IntersectionObserver(es=>{
+    visivel=es[0].isIntersecting;
+    if(visivel){medeRolagem();acorda();}
+    else if(laco){cancelAnimationFrame(laco);laco=null;}
+  },{rootMargin:"120px"}).observe(sec);
+
+  addEventListener("scroll",()=>{medeRolagem();acorda();},{passive:true});
+  let remede=null;
+  addEventListener("resize",()=>{clearTimeout(remede);remede=setTimeout(()=>{montar();acorda();},180);},{passive:true});
+
+  montar();medeRolagem();
+  if(RM){                       /* sem movimento: um quadro só, parado */
+    visivel=true;quadro(performance.now());visivel=false;
+    if(laco){cancelAnimationFrame(laco);laco=null;}
+  }
 })();
 
 /* =================== PELÍCULA: carrossel com profundidade ===================
