@@ -530,10 +530,13 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 .quadro{flex:0 0 auto;width:clamp(108px,10.4vw,142px);padding:6px;border-left:1px solid rgba(254,245,244,.12);
   position:relative}
 .quadro:first-child{border-left:0}
-.quadro .slot{width:auto;height:auto;aspect-ratio:4/3;border-radius:2px;
-  background:#F4EEE6;box-shadow:inset 0 0 22px rgba(23,18,14,.14);
-  transition:box-shadow .5s,filter .5s,transform .5s cubic-bezier(.2,.7,.2,1)}
-.quadro .slot>img{object-fit:contain;padding:16%;filter:none;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+/* os arquivos do cliente já trazem a placa clara, as cantoneiras e a
+   margem. O fotograma só os acomoda: fundo igual ao canto do arquivo,
+   proporção quase quadrada como a deles, e nenhum filtro por cima. */
+.quadro .slot{width:auto;height:auto;aspect-ratio:1/1.04;border-radius:2px;
+  background:#0D0C0A;
+  transition:box-shadow .5s,transform .5s cubic-bezier(.2,.7,.2,1)}
+.quadro .slot>img{object-fit:contain;padding:0;filter:none;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
 .quadro:hover .slot{transform:scale(1.045);box-shadow:inset 0 0 0 1px rgba(240,114,58,.5),0 0 28px -6px rgba(243,154,61,.75)}
 .quadro:hover .slot>img{transform:scale(1.05)}
 /* luz de projeção lambendo a tira */
@@ -1045,7 +1048,9 @@ const STATIC={
 WORLDS.forEach(w=>{STATIC["w-"+w.k]=w.hero;w.fotos.forEach((f,i)=>{STATIC["w-"+w.k+"-"+i]=f[0];});});
 CASES.forEach((c,i)=>{STATIC["bigcase-"+i]=c.slot.endsWith(".jpg")?c.slot:c.slot+".jpg";});
 BRANDS.forEach((b,i)=>{STATIC["brand-"+i]=b.slot.endsWith(".jpg")?b.slot:b.slot+".jpg";STATIC["brandlogo-"+i]=b.logo;});
-LOGOS.forEach((l,i)=>{STATIC["logo-"+i]=l+".jpg";});
+/* os logos de cliente vieram do cliente já padronizados, em placa clara
+   sobre fundo escuro, e entram exatamente como foram entregues */
+LOGOS.forEach((l,i)=>{STATIC["logo-"+i]=l+".png";});
 
 /* =================== SLOTS =================== */
 const S={slots:{},db:null,assets:null,editMode:false,current:null};
