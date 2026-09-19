@@ -224,6 +224,10 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 .wdrag i{display:block;width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--o3));animation:swipe 2.8s ease-in-out infinite}
 @keyframes swipe{0%,100%{transform:translateX(-6px);opacity:.25}50%{transform:translateX(6px);opacity:1}}
 .world{flex:0 0 min(1180px,92vw);scroll-snap-align:center;padding-inline:clamp(10px,1.6vw,26px);position:relative}
+/* sem esta sobra nas pontas o primeiro e o último mundo não conseguem
+   chegar ao centro do trilho: encostam na borda e a máscara come a foto */
+.wtrack>.world:first-child{margin-left:var(--fade)}
+.wtrack>.world:last-child{margin-right:var(--fade)}
 /* a atmosfera apaga na própria cor e morre bem antes da borda,
    para nunca encostar no recorte do trilho */
 .world .atmos{position:absolute;inset:-9% -4%;z-index:0;pointer-events:none;opacity:.5;will-change:transform;
