@@ -1653,22 +1653,30 @@ if(location.hash.startsWith("#atracao/")){setTimeout(()=>{start();openAttr(locat
   }
   const acorda=()=>{if(visivel&&!laco)laco=requestAnimationFrame(quadro);};
 
-  /* só gasta quadro quando a seção está à vista */
-  new IntersectionObserver(es=>{
-    visivel=es[0].isIntersecting;
-    if(visivel){medeRolagem();acorda();}
-    else if(laco){cancelAnimationFrame(laco);laco=null;}
-  },{rootMargin:"120px"}).observe(sec);
+  /* Só gasta quadro com a seção à vista, e isso é medido pelo próprio
+     retângulo. Um IntersectionObserver seria mais elegante, mas ele não
+     entrega nada quando a aba está em segundo plano ou a página não está
+     sendo pintada, e aí a sala nunca chegava a existir. Medir o retângulo
+     no evento de rolagem não depende de o navegador estar compondo. */
+  function noCampo(){const r=sec.getBoundingClientRect();
+    return r.top<innerHeight+140&&r.bottom>-140;}
+  function reavalia(){
+    const v=noCampo();
+    if(v!==visivel){visivel=v;if(!v&&laco){cancelAnimationFrame(laco);laco=null;}}
+    if(visivel){medeRolagem();acorda();}}
 
-  addEventListener("scroll",()=>{medeRolagem();acorda();},{passive:true});
+  addEventListener("scroll",reavalia,{passive:true});
   let remede=null;
-  addEventListener("resize",()=>{clearTimeout(remede);remede=setTimeout(()=>{montar();acorda();},180);},{passive:true});
+  addEventListener("resize",()=>{clearTimeout(remede);
+    remede=setTimeout(()=>{montar();pintaUm();reavalia();},180);},{passive:true});
 
-  montar();medeRolagem();
-  if(RM){                       /* sem movimento: um quadro só, parado */
-    visivel=true;quadro(performance.now());visivel=false;
-    if(laco){cancelAnimationFrame(laco);laco=null;}
-  }
+  /* um quadro imediato: a sala existe desde a carga, mesmo antes de o
+     laço começar, e é também o estado final de quem pediu menos movimento */
+  function pintaUm(){const v=visivel;visivel=false;quadro(performance.now());visivel=v;
+    if(laco){cancelAnimationFrame(laco);laco=null;}}
+
+  montar();medeRolagem();pintaUm();
+  if(!RM)reavalia();
 })();
 
 /* =================== PELÍCULA: carrossel com profundidade ===================
