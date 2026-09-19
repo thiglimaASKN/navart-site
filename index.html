@@ -489,24 +489,8 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
   filter:none;background:#FEF5F4;padding:8px 12px;border-radius:6px;justify-self:start;
   box-shadow:0 12px 28px -16px rgba(0,0,0,.95)}
 @media (max-width:560px){.brand .mark{height:48px;width:120px;padding:7px 10px}}
-/* assinatura de duas marcas: os dois selos ligados por um fio de LED,
-   para lerem como uma parceria e não como dois logos encostados */
-.brand .duplo{display:flex;align-items:center;gap:0;justify-self:start}
-.brand .duplo .mark{justify-self:auto}
-.brand .duplo .elo{width:clamp(22px,2.4vw,38px);height:1px;flex:0 0 auto;position:relative;
-  background:linear-gradient(90deg,rgba(254,245,244,.16),var(--o3),rgba(254,245,244,.16))}
-.brand .duplo .elo::after{content:"";position:absolute;top:-2px;left:50%;width:5px;height:5px;margin-left:-2.5px;
-  border-radius:50%;background:var(--o4);box-shadow:0 0 9px var(--o4),0 0 20px rgba(240,114,58,.55)}
-.brand h4 i{font-style:normal;font-weight:400;opacity:.5;padding-inline:2px}
-@media (max-width:560px){.brand .duplo .mark{height:40px;width:98px}}
 .brand h4{font-family:var(--fd);font-size:clamp(15px,1.5vw,20px);font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:1.12}
 .brand p{font-size:13px;line-height:1.55;color:#BDB3AA}
-/* cartão largo de fechamento: a legenda desce para a base, em vez de
-   ocupar a lateral, para não cobrir nenhum dos personagens */
-.brand.wide{grid-column:1/-1;aspect-ratio:21/9}
-.brand.wide .shade{background:linear-gradient(0deg,rgba(5,5,5,.95) 3%,rgba(5,5,5,.66) 32%,rgba(5,5,5,.12) 62%,transparent 80%)}
-.brand.wide .in{align-content:end;max-width:min(640px,74%);gap:10px}
-@media (max-width:820px){.brand.wide{aspect-ratio:3/2}.brand.wide .in{max-width:100%}}
 /* Oito quadrados por linha, com o logo em placa clara.
    Antes eram tiras pequenas em cinza clareado a 170%, o que sobre fundo
    branco apagava a marca inteira: virava um retângulo branco. */
@@ -1038,8 +1022,8 @@ const BRANDS=[
  {logo:"logo-cinemark.jpg",slot:"geek-pantera2.jpg",n:"Cinemark",p:"Pantera Negra, O Grinch e Han Solo nas estreias do Shopping D e do Metrô Tucuruvi.",keep:true},
  {logo:"logo-piticas.jpg",slot:"geek-piticas",n:"Piticas",p:"The Walking Dead e Star Wars no lançamento das coleções de camisetas."},
  {logo:"logo-shell-open-air.jpg",slot:"hall-balloons",n:"Shell Open Air",p:"O palhaço de IT no maior cinema a céu aberto do país, no Jockey Club."},
- {logo:"logo-fanta.jpg",logo2:"logo-coca-cola.png",slot:"fanta-beetlejuice.jpg",n:"Fanta",n2:"Coca-Cola",
-  p:"Beetlejuice e os fantasmas da campanha Fantasmas Divertidos, na ativação de estreia do filme.",keep:true,wide:true}
+ {logo:"logo-fanta.jpg",slot:"fanta-beetlejuice.jpg",n:"Fanta",p:"Beetlejuice na ativação de estreia do filme, com o painel da campanha ao fundo."},
+ {logo:"logo-coca-cola.png",slot:"coca-fantasmas.jpg",n:"Coca-Cola",p:"Fantasmas Divertidos é campanha da Coca-Cola. A caracterização dos três personagens foi da Navart."}
 ];
 const LOGOS=["logo-unimed","logo-coca-cola","logo-3m","logo-objetivo","logo-apsen","logo-morumbi-town-shopping","logo-granja-vianna-shopping","logo-metro-tucuruvi-shopping","logo-d-shopping","logo-cine-araujo","logo-deck-beach","logo-folks-pub","logo-urla","logo-atletica-araras","logo-edub-two","logo-festa-julina-de-sorocaba"];
 const STATIC={
@@ -1176,17 +1160,9 @@ const body=document.body,RM=matchMedia("(prefers-reduced-motion: reduce)").match
 /* marcas */
 (function(){
   const r=document.getElementById("brandrow");
-  BRANDS.forEach((b,i)=>{const d=document.createElement("div");d.className="brand"+(b.wide?" wide":"");
-    /* quando a ativação é de duas marcas, elas entram numa única
-       assinatura: a principal, um fio de LED e a segunda em seguida */
-    const selo=b.logo2
-      ? '<div class="duplo"><img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy">'
-        +'<i class="elo" aria-hidden="true"></i>'
-        +'<img class="mark" src="img/'+b.logo2+'" alt="'+b.n2+'" loading="lazy"></div>'
-      : '<img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy">';
-    const titulo=b.logo2?(b.n+' <i>e</i> '+b.n2):b.n;
+  BRANDS.forEach((b,i)=>{const d=document.createElement("div");d.className="brand";
     d.innerHTML='<div class="slot" data-slot="brand-'+i+'" data-label="'+b.n+'" data-kind="image"></div><div class="shade"></div>'+
-      '<div class="in">'+selo+'<h4>'+titulo+'</h4><p>'+b.p+'</p></div>';
+      '<div class="in"><img class="mark" src="img/'+b.logo+'" alt="'+b.n+'" loading="lazy"><h4>'+b.n+'</h4><p>'+b.p+'</p></div>';
     r.appendChild(d);});
   /* a película: dois rolos, cada um com metade dos clientes.
      O conteúdo é duplicado porque a animação anda -50%: ao chegar lá,
