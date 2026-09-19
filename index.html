@@ -1099,8 +1099,12 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
     function step(t){const p=Math.min(1,(t-t0)/D);wtrack.scrollLeft=from+amount*ease(Math.sin(p*Math.PI));if(p<1)requestAnimationFrame(step);}
     setTimeout(()=>requestAnimationFrame(step),520);});},{threshold:.3}).observe(wtrack);
   /* roda do mouse na horizontal enquanto o cursor está sobre o trilho */
+  /* A roda vertical pertence à página, sempre. Antes ela era desviada para
+     o trilho, e quem só queria descer ficava preso atravessando sete mundos.
+     O gesto lateral do trackpad move o trilho sozinho, sem script; aqui só
+     acrescentamos o atalho shift + roda, que nem todo navegador cobre. */
   wtrack.addEventListener("wheel",e=>{
-    if(Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+    if(!e.shiftKey)return;
     const max=wtrack.scrollWidth-wtrack.clientWidth;
     if((e.deltaY<0&&wtrack.scrollLeft<=0)||(e.deltaY>0&&wtrack.scrollLeft>=max-1))return;
     e.preventDefault();wtrack.scrollLeft+=e.deltaY;},{passive:false});
