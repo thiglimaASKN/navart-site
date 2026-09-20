@@ -28,12 +28,26 @@ jobs:
             echo "pronto=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Mapear as pastas do servidor
+        if: steps.segredos.outputs.pronto == 'true'
+        continue-on-error: true
+        env:
+          H: ${{ secrets.FTP_HOST }}
+          U: ${{ secrets.FTP_USER }}
+          P: ${{ secrets.FTP_PASS }}
+        run: |
+          host="${H#ftp://}"; host="${host#ftps://}"; host="${host%/}"
+          for pasta in "" "domains/" "domains/navart.com.br/" "domains/navart.com.br/public_html/" "public_html/"; do
+            echo "=== /$pasta ==="
+            curl -s --ssl-reqd --list-only --max-time 40 --user "$U:$P" "ftp://$host/$pasta" | head -20 || echo "  (nao acessivel)"
+          done
+
       - name: Liberar os buscadores no domínio definitivo
         if: steps.segredos.outputs.pronto == 'true'
         run: |
           printf 'User-agent: *\nAllow: /\n' > robots.txt
 
-      - name: Enviar por FTP para public_html
+      - name: Enviar para a pasta do site
         if: steps.segredos.outputs.pronto == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -41,8 +55,9 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           protocol: ftps
-          server-dir: public_html/
+          server-dir: domains/navart.com.br/public_html/
           local-dir: ./
+          dangerous-clean-slate: ${{ github.event_name == 'workflow_dispatch' }}
           exclude: |
             **/.git*
             **/.git*/**
