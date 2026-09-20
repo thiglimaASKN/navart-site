@@ -16,8 +16,8 @@ jobs:
       - name: Baixar o repositório
         uses: actions/checkout@v4
 
-      - name: Mapear o servidor
-        id: mapa
+      - name: Apagar a cópia perdida da tentativa anterior
+        continue-on-error: true
         env:
           H: ${{ secrets.FTP_HOST }}
           U: ${{ secrets.FTP_USER }}
@@ -33,36 +33,42 @@ jobs:
           f.connect(host, 21, timeout=45)
           f.login(os.environ["U"], os.environ["P"])
           f.prot_p()
-          raiz = f.pwd()
-          print("A CONTA FTP ENTRA EM:", raiz)
-          print()
-          achados = []
-          def eh_pasta(caminho):
+          def limpar(p):
               try:
-                  f.cwd(caminho); f.cwd(raiz); return True
-              except Exception:
-                  return False
-          def andar(caminho, nivel):
-              if nivel > 4:
-                  return
-              try:
-                  nomes = f.nlst(caminho)
+                  for n in f.nlst(p):
+                      base = n.split("/")[-1]
+                      if base in (".",".."):
+                          continue
+                      cheio = p.rstrip("/") + "/" + base
+                      try:
+                          f.delete(cheio)
+                      except Exception:
+                          limpar(cheio)
+                  f.rmd(p)
+                  print("removida:", p)
               except Exception as e:
-                  return
-              for n in sorted(nomes)[:60]:
-                  base = n.split("/")[-1]
-                  if base in (".", ".."):
-                      continue
-                  cheio = (caminho.rstrip("/") + "/" + base) if caminho not in (".","") else base
-                  if base == "index.html":
-                      achados.append(cheio)
-                      print("  " * nivel + "-> index.html EM: " + cheio)
-                      continue
-                  if eh_pasta(cheio):
-                      print("  " * nivel + "[pasta] " + cheio)
-                      andar(cheio, nivel + 1)
-          andar(".", 0)
-          print()
-          print("INDEX.HTML ENCONTRADOS:", achados if achados else "nenhum")
+                  print("nada a remover em", p, "-", e)
+          limpar("domains")
           f.quit()
           PY
+
+      - name: Liberar os buscadores no domínio definitivo
+        run: |
+          printf 'User-agent: *\nAllow: /\n' > robots.txt
+
+      - name: Enviar para a pasta do site
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          server-dir: ./
+          local-dir: ./
+          dangerous-clean-slate: ${{ github.event_name == 'workflow_dispatch' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
+            .nojekyll
