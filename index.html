@@ -56,6 +56,9 @@ section{position:relative}
 /* dois botões lado a lado no bloco de contato, ambos sólidos: texto escuro sobre laranja */
 .contact .botoes{display:flex;gap:10px;flex-wrap:wrap}
 .contact .botoes .btn{flex:1 1 auto;justify-content:center}
+/* texto escuro sobre o laranja em qualquer estado: parado, mouse em cima ou foco.
+   Regras genéricas de link no cartão escuro clareavam o texto no hover. */
+.contact .botoes .btn,.contact .botoes .btn:hover,.contact .botoes .btn:focus-visible{color:#1a0d05!important;text-shadow:none}
 .light .btn{border-color:rgba(23,18,14,.25);color:var(--ink)}
 .light .btn.solid{color:#1a0d05;border-color:transparent}
 
@@ -96,6 +99,8 @@ body.on-light header.top .burger{border-color:rgba(23,18,14,.25)}
 /* nas fotos de personagem o rosto está no terço de cima. Ancorar o
    enquadramento ali, e não no centro, é o que evita cortar cabeças. */
 .world .wgrid .slot>img,.world .big>img,.date .slot>img,.drawer .slot>img,.bigcase .slot>img{object-position:50% 18%}
+/* exceção: na foto grande do Infantil o rosto está embaixo, no meio do quadro */
+.world .big[data-slot="w-infantil"]>img{object-position:50% 50%}
 .brand .slot>img{object-position:64% 28%}
 .slot .empty{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;z-index:1;color:rgba(254,245,244,.45);font:500 10.5px/1.5 var(--ft);letter-spacing:.1em;text-transform:uppercase}
 body.can-edit .slot:not(.has) .empty{display:flex}
@@ -945,7 +950,6 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
         <div class="row"><span class="eyebrow">E-mail</span><a href="mailto:contato@navart.com.br">contato@navart.com.br</a></div>
         <div class="row"><span class="eyebrow">Endereço</span><p>Rua José Abel Buckart, 218 · Wanel Ville<br>Sorocaba / SP</p></div>
         <div class="row botoes">
-          <a class="btn solid" href="https://wa.me/5515992614444" target="_blank" rel="noopener">WhatsApp</a>
           <a class="btn solid" href="mailto:contato@navart.com.br">Enviar e-mail</a>
         </div>
       </aside>
