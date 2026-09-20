@@ -30,7 +30,8 @@ jobs:
 
       - name: Liberar os buscadores no domínio definitivo
         if: steps.segredos.outputs.pronto == 'true'
-        run: printf 'User-agent: *\nAllow: /\n' > robots.txt
+        run: |
+          printf 'User-agent: *\nAllow: /\n' > robots.txt
 
       - name: Enviar por FTP para public_html
         if: steps.segredos.outputs.pronto == 'true'
