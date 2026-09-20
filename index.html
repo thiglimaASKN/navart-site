@@ -357,8 +357,9 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 .months span.on{color:var(--o4)}
 .months span.now{color:var(--ink);font-weight:700}
 .timeline .track{position:absolute;left:0;right:0;bottom:10px;height:1px;background:rgba(23,18,14,.18)}
-.timeline .fill{position:absolute;left:0;bottom:10px;height:1px;width:0;background:var(--led);box-shadow:0 0 10px rgba(243,154,61,.7)}
-.timeline .knob{position:absolute;bottom:3px;left:0;width:15px;height:15px;border-radius:50%;background:var(--led);box-shadow:0 0 14px rgba(249,178,51,.85);transform:translateX(-50%);cursor:grab}
+.timeline .fill{position:absolute;left:0;bottom:10px;height:1px;width:0;background:var(--led);box-shadow:0 0 10px rgba(243,154,61,.7);transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.timeline .knob{position:absolute;bottom:3px;left:0;width:15px;height:15px;border-radius:50%;background:var(--led);box-shadow:0 0 14px rgba(249,178,51,.85);transform:translateX(-50%);cursor:grab;transition:left .45s cubic-bezier(.2,.7,.2,1)}
+.timeline.dragging .fill,.timeline.dragging .knob{transition:none}
 .timeline .knob::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:1px solid rgba(240,114,58,.3);animation:pulse 3.4s ease-out infinite}
 .crail{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 0 18px;scrollbar-width:none;cursor:grab;scroll-behavior:auto}
 .crail.dragging{scroll-snap-type:none;cursor:grabbing}
@@ -1368,18 +1369,34 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
   document.getElementById("railR").onclick=()=>rail.scrollBy({left:360,behavior:"smooth"});
   let moved=false;cards.forEach(d=>d.addEventListener("click",()=>{if(!moved)openAttr(d.dataset.open);}));
   let raf=null;
-  function sync(){raf=null;const max=rail.scrollWidth-rail.clientWidth,ratio=max>0?rail.scrollLeft/max:0;
-    knob.style.left=fill.style.width=(ratio*100)+"%";knob.setAttribute("aria-valuenow",Math.round(ratio*100));
+  /* A bolinha fica debaixo do MÊS do cartão que está no centro, e não na
+     proporção da rolagem. A rolagem vai de 0 a 1 entre o primeiro e o último
+     cartão encostados à esquerda, o que não tem relação com a posição dos
+     doze meses na régua: com SETEMBRO no centro, a rolagem já estava quase
+     no fim e a bolinha caía em DEZEMBRO. Agora ela é calculada a partir do
+     próprio rótulo do mês, então não há como as duas coisas divergirem. */
+  function centroDoMes(mi){const m=months[mi];return m.offsetLeft+m.offsetWidth/2;}
+  function levaAoCentro(card,suave){
+    const alvo=card.offsetLeft-(rail.clientWidth-card.offsetWidth)/2;
+    if(suave)rail.scrollTo({left:alvo,behavior:"smooth"});else rail.scrollLeft=alvo;}
+  function sync(){raf=null;
     const rc=rail.getBoundingClientRect(),cx=rc.left+rc.width/2;let best=null,bd=1e9;
     cards.forEach(c=>{const r=c.getBoundingClientRect(),off=(r.left+r.width/2-cx)/rc.width;
       if(!RM){const s=c.querySelector(".slot");if(s)s.style.setProperty("--px",(off*-26).toFixed(1)+"px");c.style.setProperty("--sc",(1-Math.min(.04,Math.abs(off)*.06)).toFixed(3));}
       const d=Math.abs(off);if(d<bd){bd=d;best=c;}});
-    if(best){months.forEach(m=>m.classList.remove("on"));const mi=+best.dataset.month;months[mi].classList.add("on");if(mi===1)months[2].classList.add("on");}}
+    if(!best)return;
+    const mi=+best.dataset.month;
+    months.forEach(m=>m.classList.remove("on"));months[mi].classList.add("on");if(mi===1)months[2].classList.add("on");
+    const x=centroDoMes(mi);
+    knob.style.left=x+"px";fill.style.width=x+"px";
+    knob.setAttribute("aria-valuenow",Math.round(mi/11*100));knob.setAttribute("aria-valuetext",months[mi].textContent);}
   const tick=()=>{if(!raf)raf=requestAnimationFrame(sync);};
   rail.addEventListener("scroll",tick,{passive:true});addEventListener("resize",tick);
-  // posiciona no mês atual
+  /* abre com o cartão do mês atual no CENTRO, que é onde a leitura acontece.
+     Antes ele era encostado à esquerda, e o centro caía no mês seguinte:
+     SETEMBRO em negrito, OUTUBRO aceso. */
   const cur=rail.querySelector(".date.now");
-  if(cur)rail.scrollLeft=Math.max(0,cur.offsetLeft-rail.offsetLeft-20);
+  if(cur)levaAoCentro(cur,false);
   sync();
   // convite sutil a deslizar, uma vez
   let nudged=false;
@@ -1395,13 +1412,17 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
   const up=()=>{if(!down)return;down=false;rail.classList.remove("dragging");setTimeout(()=>{moved=false;},50);};
   rail.addEventListener("pointerup",up);rail.addEventListener("pointerleave",up);rail.addEventListener("pointercancel",up);
   let td=false;
-  function setFromX(x){const r=tl.getBoundingClientRect(),ratio=Math.min(1,Math.max(0,(x-r.left)/r.width));rail.classList.add("dragging");rail.scrollLeft=ratio*(rail.scrollWidth-rail.clientWidth);}
+  /* arrastar a régua escolhe um MÊS pela posição do dedo e centraliza o
+     cartão desse mês. Assim a bolinha e o cartão obedecem à mesma régua. */
+  function cartaoDoMes(mi){return cards.reduce((a,b)=>Math.abs(+b.dataset.month-mi)<Math.abs(+a.dataset.month-mi)?b:a);}
+  function setFromX(x){const r=tl.getBoundingClientRect(),ratio=Math.min(1,Math.max(0,(x-r.left)/r.width));
+    rail.classList.add("dragging");levaAoCentro(cartaoDoMes(Math.round(ratio*11)),false);}
   tl.addEventListener("pointerdown",e=>{if(e.target.closest(".months"))return;td=true;tl.classList.add("dragging");tl.setPointerCapture(e.pointerId);setFromX(e.clientX);});
   tl.addEventListener("pointermove",e=>{if(td)setFromX(e.clientX);});
   const tup=()=>{if(!td)return;td=false;tl.classList.remove("dragging");rail.classList.remove("dragging");};
   tl.addEventListener("pointerup",tup);tl.addEventListener("pointercancel",tup);
   knob.addEventListener("keydown",e=>{if(e.key==="ArrowRight")rail.scrollBy({left:360,behavior:"smooth"});if(e.key==="ArrowLeft")rail.scrollBy({left:-360,behavior:"smooth"});});
-  months.forEach((m,i)=>m.addEventListener("click",()=>{const c=cards.reduce((a,b)=>Math.abs(+b.dataset.month-i)<Math.abs(+a.dataset.month-i)?b:a);c.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});}));
+  months.forEach((m,i)=>m.addEventListener("click",()=>levaAoCentro(cartaoDoMes(i),true)));
 })();
 
 /* =================== FICHA =================== */
