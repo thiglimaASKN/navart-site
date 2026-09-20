@@ -16,8 +16,8 @@ jobs:
       - name: Baixar o repositório
         uses: actions/checkout@v4
 
-      - name: Apagar a cópia perdida da tentativa anterior
-        continue-on-error: true
+      - name: Achar a pasta que o domínio serve
+        id: pasta
         env:
           H: ${{ secrets.FTP_HOST }}
           U: ${{ secrets.FTP_USER }}
@@ -33,37 +33,37 @@ jobs:
           f.connect(host, 21, timeout=45)
           f.login(os.environ["U"], os.environ["P"])
           f.prot_p()
-          def limpar(p):
+          print("A conta FTP entra em:", f.pwd())
+          for p in ["/", "/domains", "/domains/navart.com.br"]:
+              print("\n=== %s ===" % p)
               try:
-                  for n in f.nlst(p):
-                      base = n.split("/")[-1]
-                      if base in (".",".."):
-                          continue
-                      cheio = p.rstrip("/") + "/" + base
-                      try:
-                          f.delete(cheio)
-                      except Exception:
-                          limpar(cheio)
-                  f.rmd(p)
-                  print("removida:", p)
+                  for n in sorted(f.nlst(p))[:40]:
+                      print("   ", n)
               except Exception as e:
-                  print("nada a remover em", p, "-", e)
-          limpar("domains")
+                  print("    (sem acesso):", e)
+          destino = ""
+          for c in ["/domains/navart.com.br/public_html", "/public_html"]:
+              try:
+                  f.cwd(c); destino = c; break
+              except Exception:
+                  pass
+          print("\nDESTINO:", destino)
+          open(os.environ["GITHUB_OUTPUT"],"a").write("destino=%s\n" % destino)
           f.quit()
           PY
 
-      - name: Liberar os buscadores no domínio definitivo
+      - name: Liberar os buscadores
         run: |
           printf 'User-agent: *\nAllow: /\n' > robots.txt
 
-      - name: Enviar para a pasta do site
+      - name: Enviar para a pasta do domínio
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           protocol: ftps
-          server-dir: ./
+          server-dir: ${{ steps.pasta.outputs.destino }}/
           local-dir: ./
           dangerous-clean-slate: ${{ github.event_name == 'workflow_dispatch' }}
           exclude: |
