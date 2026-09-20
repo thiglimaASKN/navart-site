@@ -1361,6 +1361,9 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
   const livroPags=[...document.querySelectorAll("#livro .pagina")];
   function sync(){raf=null;progress();
     const rc=wtrack.getBoundingClientRect(),cx=rc.left+rc.width/2;let best=0,bd=1e9;
+    /* sem largura (aba oculta, layout ainda não medido) não há o que calcular:
+       evitar divisão por zero, que viraria Infinity nas variáveis */
+    if(!rc.width)return;
     [...wtrack.children].forEach((p,i)=>{
       const r=p.getBoundingClientRect(),off=(r.left+r.width/2-cx)/rc.width;
       if(!RM){
