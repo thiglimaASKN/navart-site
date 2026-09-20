@@ -16,51 +16,53 @@ jobs:
       - name: Baixar o repositório
         uses: actions/checkout@v4
 
-      - name: Conferir se os segredos existem
-        id: segredos
-        env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
-        run: |
-          if [ -z "$FTP_HOST" ]; then
-            echo "Segredos FTP ainda nao cadastrados; nada a publicar." >> "$GITHUB_STEP_SUMMARY"
-            echo "pronto=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "pronto=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Mapear as pastas do servidor
-        if: steps.segredos.outputs.pronto == 'true'
-        continue-on-error: true
+      - name: Mapear o servidor
+        id: mapa
         env:
           H: ${{ secrets.FTP_HOST }}
           U: ${{ secrets.FTP_USER }}
           P: ${{ secrets.FTP_PASS }}
         run: |
-          host="${H#ftp://}"; host="${host#ftps://}"; host="${host%/}"
-          for pasta in "" "domains/" "domains/navart.com.br/" "domains/navart.com.br/public_html/" "public_html/"; do
-            echo "=== /$pasta ==="
-            curl -s --ssl-reqd --list-only --max-time 40 --user "$U:$P" "ftp://$host/$pasta" | head -20 || echo "  (nao acessivel)"
-          done
-
-      - name: Liberar os buscadores no domínio definitivo
-        if: steps.segredos.outputs.pronto == 'true'
-        run: |
-          printf 'User-agent: *\nAllow: /\n' > robots.txt
-
-      - name: Enviar para a pasta do site
-        if: steps.segredos.outputs.pronto == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          protocol: ftps
-          server-dir: domains/navart.com.br/public_html/
-          local-dir: ./
-          dangerous-clean-slate: ${{ github.event_name == 'workflow_dispatch' }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            README.md
-            .nojekyll
+          python3 - <<'PY'
+          import os, ssl, ftplib
+          host = os.environ.get("H","").replace("ftps://","").replace("ftp://","").strip("/")
+          ctx = ssl.create_default_context()
+          ctx.check_hostname = False
+          ctx.verify_mode = ssl.CERT_NONE
+          f = ftplib.FTP_TLS(context=ctx)
+          f.connect(host, 21, timeout=45)
+          f.login(os.environ["U"], os.environ["P"])
+          f.prot_p()
+          raiz = f.pwd()
+          print("A CONTA FTP ENTRA EM:", raiz)
+          print()
+          achados = []
+          def eh_pasta(caminho):
+              try:
+                  f.cwd(caminho); f.cwd(raiz); return True
+              except Exception:
+                  return False
+          def andar(caminho, nivel):
+              if nivel > 4:
+                  return
+              try:
+                  nomes = f.nlst(caminho)
+              except Exception as e:
+                  return
+              for n in sorted(nomes)[:60]:
+                  base = n.split("/")[-1]
+                  if base in (".", ".."):
+                      continue
+                  cheio = (caminho.rstrip("/") + "/" + base) if caminho not in (".","") else base
+                  if base == "index.html":
+                      achados.append(cheio)
+                      print("  " * nivel + "-> index.html EM: " + cheio)
+                      continue
+                  if eh_pasta(cheio):
+                      print("  " * nivel + "[pasta] " + cheio)
+                      andar(cheio, nivel + 1)
+          andar(".", 0)
+          print()
+          print("INDEX.HTML ENCONTRADOS:", achados if achados else "nenhum")
+          f.quit()
+          PY
