@@ -441,15 +441,10 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 @media (max-width:520px){.portrait .tag{left:8px}.portrait .plate{inset:-14px}}
 
 /* ============ 06 CASES ============ */
-/* Abertura da seção como entrada editorial, não como título.
-   Estava em Unbounded a 27px, a mesma fonte dos títulos, sozinha no
-   escuro: lia como subtítulo grande e genérico. Agora é texto, em
-   Montserrat, com uma etiqueta à esquerda que diz o que vem a seguir. */
-#cases .casetop{display:grid;grid-template-columns:minmax(0,.2fr) minmax(0,1fr);gap:clamp(16px,3vw,50px);
-  align-items:start;padding-bottom:clamp(28px,4vw,50px)}
-@media (max-width:760px){#cases .casetop{grid-template-columns:1fr;gap:12px}}
-#cases .casetop .k{font:600 10.5px/1.5 var(--ft);letter-spacing:.2em;text-transform:uppercase;color:var(--o3);padding-top:5px;white-space:nowrap}
-#cases .lede{max-width:50ch;margin:0;font:500 clamp(16px,1.4vw,20.5px)/1.52 var(--ft);letter-spacing:0;color:#D3C9C0;text-wrap:pretty}
+/* título dos cases no mesmo padrão dos outros: display, caixa alta,
+   uma palavra em laranja com o brilho de LED */
+#cases>.wrap>h2{margin-bottom:clamp(36px,5vw,66px);line-height:1.02;letter-spacing:-.02em}
+#cases>.wrap>h2 .orange{text-shadow:0 0 34px rgba(240,114,58,.38)}
 /* As duas colunas começam na mesma linha de topo. Centralizadas, cada
    case assentava numa altura diferente e a página parecia desalinhada. */
 .bigcase{display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(24px,4vw,64px);align-items:start;
@@ -834,10 +829,7 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
 <!-- ===== 06 CASES ===== -->
 <section id="cases" class="dark pad">
   <div class="wrap">
-    <div class="casetop rv">
-      <span class="k">Quatro provas</span>
-      <p class="lede">O que um personagem faz <span class="grad">fora da festa</span>.</p>
-    </div>
+    <h2 class="h-lg rv">O que um personagem<br>faz <span class="orange">fora da festa</span>.</h2>
     <div id="caseList"></div>
   </div>
 </section>
