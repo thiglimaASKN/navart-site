@@ -4,6 +4,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Navart Entretenimento: personagens vivos, caracterização e atrações para eventos, ativações de marca e datas comemorativas. Sorocaba, SP, desde 2016.">
 <meta name="theme-color" content="#050505">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
 <title>Navart Entretenimento</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Unbounded:wght@500;700;900&display=swap">
@@ -50,6 +53,9 @@ section{position:relative}
 .btn:hover::before,.btn:focus-visible::before{opacity:1}
 .btn.solid{border-color:transparent;color:#1a0d05}
 .btn.solid::before{opacity:1}
+/* dois botões lado a lado no bloco de contato, ambos sólidos: texto escuro sobre laranja */
+.contact .botoes{display:flex;gap:10px;flex-wrap:wrap}
+.contact .botoes .btn{flex:1 1 auto;justify-content:center}
 .light .btn{border-color:rgba(23,18,14,.25);color:var(--ink)}
 .light .btn.solid{color:#1a0d05;border-color:transparent}
 
@@ -87,6 +93,10 @@ body.on-light header.top .burger{border-color:rgba(23,18,14,.25)}
 .slot{position:relative;overflow:hidden;background:#0A0908;border-radius:6px;isolation:isolate}
 .light .slot{background:#EFE4DF}
 .slot>img,.slot>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:transform 1.3s cubic-bezier(.2,.7,.2,1),filter .7s;filter:saturate(1.04) contrast(1.02)}
+/* nas fotos de personagem o rosto está no terço de cima. Ancorar o
+   enquadramento ali, e não no centro, é o que evita cortar cabeças. */
+.world .wgrid .slot>img,.world .big>img,.date .slot>img,.drawer .slot>img,.bigcase .slot>img{object-position:50% 18%}
+.brand .slot>img{object-position:64% 28%}
 .slot .empty{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;z-index:1;color:rgba(254,245,244,.45);font:500 10.5px/1.5 var(--ft);letter-spacing:.1em;text-transform:uppercase}
 body.can-edit .slot:not(.has) .empty{display:flex}
 .slot .tools{position:absolute;inset:auto 10px 10px 10px;display:none;gap:8px;justify-content:center;z-index:5;flex-wrap:wrap}
@@ -150,26 +160,48 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 #hero canvas{position:absolute;inset:0;z-index:4;pointer-events:none;width:100%;height:100%}
 #hero .content{position:relative;z-index:5;width:min(1280px,100% - 40px);margin-inline:auto;padding-block:0 clamp(58px,10vh,118px);display:grid;gap:18px;justify-items:start;will-change:transform,opacity}
 /* frase "Era uma vez" */
-.once{font:400 clamp(15px,1.7vw,22px)/1.5 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:rgba(254,245,244,.9);display:flex;flex-wrap:wrap;gap:0 .42em}
-.once span{display:inline-block;opacity:0;filter:blur(9px);transform:translateY(14px);animation:wordin 1.5s cubic-bezier(.16,.84,.3,1) forwards}
+/* "Era uma vez": a frase se condensa de uma névoa.
+   Cada palavra nasce larga, desfocada e luminosa, e vai se fechando até
+   ficar nítida. Duas nuvens de bruma passam pela linha, uma à frente das
+   palavras e outra atrás, mais lenta. As cores são as da própria cena
+   (creme quente e o laranja da marca) em alfa baixo e mistura "screen",
+   então a bruma clareia o que está atrás em vez de pintar por cima. */
+.once{font:400 clamp(15px,1.7vw,22px)/1.5 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:rgba(254,245,244,.92);
+  display:flex;flex-wrap:wrap;gap:0 .42em;position:relative;padding-block:2px;isolation:isolate}
+.once span{display:inline-block;opacity:0;filter:blur(22px);transform:translateY(6px) scale(1.14);letter-spacing:.38em;
+  animation:condensa 2.6s cubic-bezier(.2,.65,.2,1) forwards;will-change:filter,transform,opacity}
+@keyframes condensa{
+  0%  {opacity:0;filter:blur(22px);transform:translateY(6px) scale(1.14);letter-spacing:.38em;text-shadow:0 0 0 rgba(255,236,200,0)}
+  30% {opacity:.5;filter:blur(11px);transform:translateY(3px) scale(1.07);letter-spacing:.26em;
+       text-shadow:0 0 26px rgba(255,236,200,.85),0 0 60px rgba(249,178,51,.45)}
+  68% {opacity:.96;filter:blur(1.6px);transform:translateY(0) scale(1.01);letter-spacing:.16em;
+       text-shadow:0 0 18px rgba(255,236,200,.5),0 0 36px rgba(249,178,51,.22)}
+  100%{opacity:1;filter:blur(0);transform:none;letter-spacing:.14em;text-shadow:0 0 12px rgba(255,236,200,.16)}}
 .once .em{color:var(--o2);position:relative}
-.once .em::after{content:"";position:absolute;left:-4%;right:-4%;bottom:-5px;height:1px;background:linear-gradient(90deg,transparent,var(--o2),transparent);opacity:0;animation:underin 1.6s 1.5s ease forwards}
-@keyframes wordin{to{opacity:1;filter:blur(0);transform:none}}
+.once .em::after{content:"";position:absolute;left:-4%;right:-4%;bottom:-5px;height:1px;background:linear-gradient(90deg,transparent,var(--o2),transparent);opacity:0;animation:underin 1.6s 3s ease forwards}
 @keyframes underin{to{opacity:.85}}
-/* brilho que atravessa a frase uma vez */
-.once::after{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;pointer-events:none;
-  background:linear-gradient(100deg,transparent,rgba(255,236,200,.5),transparent);mix-blend-mode:screen;
-  transform:translateX(-120%);animation:sweep 2.6s 1.7s cubic-bezier(.4,0,.2,1) forwards}
-.once{position:relative;overflow:hidden;padding-block:2px}
-@keyframes sweep{to{transform:translateX(320%)}}
+/* a bruma da frente: nuvem larga que corre à frente das palavras */
+.once::before{content:"";position:absolute;z-index:1;pointer-events:none;top:-160%;bottom:-160%;left:-14%;width:58%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(255,238,204,.42),rgba(249,178,51,.14) 42%,rgba(249,178,51,0) 72%);
+  filter:blur(18px);mix-blend-mode:screen;opacity:0;transform:translateX(-30%);
+  animation:bruma 4.2s cubic-bezier(.3,0,.2,1) forwards}
+@keyframes bruma{0%{opacity:0;transform:translateX(-30%) scaleY(.8)}18%{opacity:1}
+  70%{opacity:.75;transform:translateX(150%) scaleY(1.15)}100%{opacity:0;transform:translateX(230%) scaleY(1.3)}}
+/* a bruma de trás: mais fina, mais lenta, sobe enquanto passa */
+.once::after{content:"";position:absolute;z-index:0;pointer-events:none;top:-120%;bottom:-120%;left:-10%;width:34%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(255,236,200,.26),rgba(255,236,200,0) 70%);
+  filter:blur(14px);mix-blend-mode:screen;opacity:0;transform:translate(-20%,20%);
+  animation:bruma2 5.2s .5s cubic-bezier(.3,0,.2,1) forwards}
+@keyframes bruma2{0%{opacity:0;transform:translate(-20%,22%)}25%{opacity:.9}100%{opacity:0;transform:translate(300%,-30%)}}
 #hero h1{font-size:clamp(27px,4.3vw,60px);font-weight:900;text-transform:uppercase;line-height:1.02;letter-spacing:-.022em}
 #hero h1>span{display:block;white-space:nowrap;opacity:0;transform:translateY(26px);animation:rise 1.3s cubic-bezier(.2,.7,.2,1) forwards}
-#hero h1>span:nth-child(1){animation-delay:1.05s}
-#hero h1>span:nth-child(2){animation-delay:1.2s}
+/* o título só sobe quando a névoa já revelou boa parte da frase */
+#hero h1>span:nth-child(1){animation-delay:2.4s}
+#hero h1>span:nth-child(2){animation-delay:2.55s}
 #hero h1 .grad{display:inline;white-space:nowrap;opacity:1;transform:none;animation:none}
 @keyframes rise{to{opacity:1;transform:none}}
-#hero .lead{opacity:0;animation:rise 1.3s 1.45s cubic-bezier(.2,.7,.2,1) forwards;max-width:44ch;color:#D9CFC7}
-#hero .cta{opacity:0;animation:rise 1.3s 1.65s cubic-bezier(.2,.7,.2,1) forwards;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+#hero .lead{opacity:0;animation:rise 1.3s 2.85s cubic-bezier(.2,.7,.2,1) forwards;max-width:44ch;color:#D9CFC7}
+#hero .cta{opacity:0;animation:rise 1.3s 3.05s cubic-bezier(.2,.7,.2,1) forwards;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 #hero .since{font:500 11px/1 var(--ft);letter-spacing:.22em;text-transform:uppercase;color:rgba(254,245,244,.55)}
 .scrollhint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:5;width:1px;height:42px;background:linear-gradient(180deg,transparent,var(--o3));opacity:.6;animation:hint 3s ease-in-out infinite}
 @keyframes hint{0%,100%{transform:translate(-50%,0);opacity:.12}50%{transform:translate(-50%,8px);opacity:.9}}
@@ -588,21 +620,28 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 .recorte.r3{transform:rotate(-.55deg);margin-top:5px}
 .recorte.r2 .papel{--d:7px;--w:13px;background:#F4EFE6}
 .recorte.r3 .papel{--d:11px;--w:21px;background:#F8F4ED}
-.recorte:hover .papel{transform:translateY(-4px) rotate(.35deg)}
+/* o recorte aceso se levanta um pouco da mesa; o movimento é lento, 2 s */
+.recorte .papel{transition:transform 2s cubic-bezier(.25,.6,.2,1)}
+.recorte.viva .papel{transform:translateY(-6px) rotate(.35deg)}
 
 /* cabeçalho do veículo, como um selo de jornal */
 .recorte .cab{display:flex;align-items:center;justify-content:space-between;gap:10px;
   border-top:2.5px solid var(--ink);border-bottom:1px solid rgba(23,18,14,.32);padding:7px 0 5px;margin-bottom:11px}
 .recorte .veiculo{font:900 13px/1 var(--fd);letter-spacing:.06em;text-transform:uppercase}
 .recorte .ed{font:600 8.5px/1 var(--ft);letter-spacing:.17em;text-transform:uppercase;color:var(--mute)}
-.recorte h4{font-family:var(--fd);font-weight:800;font-size:clamp(16px,1.62vw,21px);letter-spacing:-.022em;line-height:1.1;
-  margin-bottom:11px;text-wrap:balance}
+.recorte h4{font-family:var(--fd);font-weight:900;font-size:clamp(20px,2.1vw,28px);letter-spacing:-.026em;line-height:1.04;
+  margin-bottom:12px;text-wrap:balance}
 .recorte .foto{aspect-ratio:4/3;border-radius:0;position:relative;margin-bottom:8px}
 /* retícula de impressão: o ponto do jornal, por cima da foto */
 .recorte .foto::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:multiply;opacity:.34;
   background-image:radial-gradient(circle at 50% 50%,rgba(20,16,12,.85) .8px,transparent 1.1px);background-size:3px 3px}
-.recorte .foto>img,.recorte .foto>video{filter:grayscale(.72) contrast(1.16) brightness(1.03) sepia(.12);transition:filter .8s}
-.recorte:hover .foto>img,.recorte:hover .foto>video{filter:grayscale(.1) contrast(1.05) brightness(1.04)}
+/* a foto acende e aproxima em 2 s quando o recorte está na vez;
+   não depende do mouse, é o revezamento do script que decide */
+.recorte .foto>img,.recorte .foto>video{filter:grayscale(.72) contrast(1.16) brightness(1.03) sepia(.12);
+  transform:scale(1);transition:filter 2s cubic-bezier(.25,.6,.2,1),transform 2s cubic-bezier(.25,.6,.2,1)}
+.recorte.viva .foto>img,.recorte.viva .foto>video{filter:grayscale(0) contrast(1.04) brightness(1.04);transform:scale(1.08)}
+.recorte .foto::after{transition:opacity 2s}
+.recorte.viva .foto::after{opacity:.12}
 .recorte .legenda{font:italic 500 9.5px/1.45 var(--ft);color:var(--mute);border-bottom:1px solid rgba(23,18,14,.16);
   padding-bottom:8px;margin-bottom:9px}
 .recorte .corpo{font-size:11.8px;line-height:1.62;color:var(--ink-2);text-align:justify;hyphens:auto}
@@ -621,11 +660,8 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
   background:var(--o4);box-shadow:0 0 12px var(--o4),0 0 26px rgba(240,114,58,.55)}
 .recorte.r2 .no{left:-4px;right:auto;top:26%}
 .recorte.r3 .no{top:62%}
-.colnote{columns:2;column-gap:clamp(20px,3vw,44px);column-rule:1px solid rgba(23,18,14,.18);
-  font-size:12.5px;line-height:1.72;color:var(--ink-2);text-align:justify;hyphens:auto}
-@media (max-width:620px){.colnote{columns:1}}
-.colnote p+p{margin-top:11px}
-@media (prefers-reduced-motion:reduce){.recorte .papel,.recorte:hover .papel{transition:none}}
+@media (prefers-reduced-motion:reduce){.recorte .papel,.recorte .foto>img,.recorte .foto::after{transition:none}
+  .recorte.viva .papel{transform:none}.recorte.viva .foto>img{transform:none}}
 
 /* social */
 .socialband{border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);background:var(--black-2)}
@@ -755,7 +791,7 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
   <div class="scene" id="staffScene"><img src="img/maquiagem-staff.jpg" alt="Maquiagem artística aplicada em convidados" loading="lazy"></div>
   <div class="veil"></div>
   <div class="wrap"><div class="content" id="staffContent">
-    <h2>Maquiagem para staff<br>&amp; convidados</h2>
+    <h2>Maquiagem para staff<br><span class="grad" style="white-space:nowrap">&amp; convidados</span></h2>
     <p class="sub">Deixe os seus convidados e sua staff no clima do tema da sua festa!</p>
     <button class="btn" id="makeupBtn" type="button">Pedir orçamento</button>
   </div></div>
@@ -802,7 +838,7 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
   <div class="wrap">
     <div class="casetop rv">
       <span class="k">Quatro provas</span>
-      <p class="lede">Um personagem não fica só na festa. Ele para um shopping, roda nas redes e <span class="grad">triplica o fluxo de um cinema ou de uma loja</span>.</p>
+      <p class="lede">O que um personagem faz <span class="grad">fora da festa</span>.</p>
     </div>
     <div id="caseList"></div>
   </div>
@@ -875,10 +911,6 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
         </div>
       </article>
     </div>
-    <div class="colnote rv">
-      <p>Em Sorocaba e em São Paulo, as ações da Navart circularam por jornal, televisão e pelos perfis oficiais das marcas envolvidas.</p>
-      <p>O alcance somado dos vídeos nas redes passa de 300 mil visualizações, sem investimento em mídia paga.</p>
-    </div>
   </div>
 </section>
 
@@ -920,8 +952,12 @@ body.started .wa{opacity:1;transform:none;pointer-events:auto}
       </form>
       <aside class="contact">
         <div class="row"><span class="eyebrow">Telefone e WhatsApp</span><a href="tel:+5515992614444">+55 (15) 99261-4444</a></div>
+        <div class="row"><span class="eyebrow">E-mail</span><a href="mailto:contato@navart.com.br">contato@navart.com.br</a></div>
         <div class="row"><span class="eyebrow">Endereço</span><p>Rua José Abel Buckart, 218 · Wanel Ville<br>Sorocaba / SP</p></div>
-        <div class="row"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=Rua+Jos%C3%A9+Abel+Buckart+218+Wanel+Ville+Sorocaba+SP" target="_blank" rel="noopener">Abrir no mapa</a></div>
+        <div class="row botoes">
+          <a class="btn solid" href="https://wa.me/5515992614444" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn solid" href="mailto:contato@navart.com.br">Enviar e-mail</a>
+        </div>
       </aside>
     </div>
   </div>
@@ -1110,7 +1146,7 @@ const body=document.body,RM=matchMedia("(prefers-reduced-motion: reduce)").match
 /* frase "Era uma vez" palavra a palavra */
 (function(){
   const el=document.getElementById("once"),words="Era uma vez um evento comum.".split(" ");
-  el.innerHTML=words.map((w,i)=>{const em=(w==="comum."||w==="evento")?" em":"";return '<span class="'+em.trim()+'" style="animation-delay:'+(.18+i*.13)+'s">'+w+'</span>';}).join(" ");
+  el.innerHTML=words.map((w,i)=>{const em=(w==="comum."||w==="evento")?" em":"";return '<span class="'+em.trim()+'" style="animation-delay:'+(.3+i*.24)+'s">'+w+'</span>';}).join(" ");
 })();
 /* mundos */
 (function(){
@@ -1709,6 +1745,23 @@ if(location.hash.startsWith("#atracao/")){setTimeout(()=>{start();openAttr(locat
   addEventListener("scroll",tick,{passive:true});addEventListener("resize",tick);frame();
 })();
 
+/* =================== IMPRENSA: os recortes acendem em revezamento ==========
+   Um de cada vez ganha cor e aproxima, em 2 s; segura mais 2 s; passa a vez.
+   Começa só quando a seção entra na tela, e para quando ela sai. */
+(function(){
+  if(RM)return;
+  const recs=[...document.querySelectorAll(".recorte")],sec=document.getElementById("imprensa");
+  if(recs.length<2||!sec)return;
+  let i=-1,timer=null;
+  function proxima(){
+    recs.forEach(r=>r.classList.remove("viva"));
+    i=(i+1)%recs.length;recs[i].classList.add("viva");}
+  function liga(){if(timer)return;proxima();timer=setInterval(proxima,4200);}
+  function desliga(){if(!timer)return;clearInterval(timer);timer=null;recs.forEach(r=>r.classList.remove("viva"));}
+  function avalia(){const r=sec.getBoundingClientRect();(r.top<innerHeight&&r.bottom>0)?liga():desliga();}
+  addEventListener("scroll",avalia,{passive:true});addEventListener("resize",avalia);avalia();
+})();
+
 /* =================== IMPRENSA: paralaxe leve nos recortes =================== */
 (function(){
   if(RM)return;const sec=document.getElementById("imprensa");
@@ -1791,7 +1844,8 @@ renderAll();connect();
   Promise.all([pausa,Promise.race([carrega,limite])]).then(()=>{
     abre();
     /* quando a entrada termina, a opacidade volta a ser do scroll */
-    setTimeout(()=>b.classList.add("heroFim"),3400);
+    /* libera a opacidade só depois que a última palavra terminou de se condensar */
+    setTimeout(()=>b.classList.add("heroFim"),5200);
   });
   addEventListener("scroll",()=>{if(scrollY>40)b.classList.add("rolou");},{passive:true});
 })();
