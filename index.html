@@ -80,9 +80,14 @@ body.on-light header.top nav a{color:var(--ink)}
 header.top nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--led);transition:right .35s;box-shadow:0 0 8px rgba(243,154,61,.8)}
 header.top nav a:hover::after{right:0}
 /* topo com fundo firme e desfoque: o que passa por baixo deixa de disputar com o menu */
-body.started header.top{background:linear-gradient(180deg,rgba(5,5,5,.92),rgba(5,5,5,.72) 62%,rgba(5,5,5,0));
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-body.started.on-light header.top{background:linear-gradient(180deg,rgba(254,245,244,.92),rgba(254,245,244,0))}
+/* silhueta do topo: um degradê que desce bem além da barra e morre em
+   transparência total, sem desfoque. O desfoque terminava na borda da
+   barra e desenhava um corte reto; o degradê longo não tem borda. */
+header.top::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-110px;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(5,5,5,.9) 0,rgba(5,5,5,.66) 34%,rgba(5,5,5,.28) 66%,rgba(5,5,5,0) 100%);
+  opacity:0;transition:opacity .5s}
+body.started header.top::before{opacity:1}
+body.started.on-light header.top::before{background:linear-gradient(180deg,rgba(254,245,244,.94) 0,rgba(254,245,244,.6) 40%,rgba(254,245,244,0) 100%)}
 header.top .burger{display:none;pointer-events:auto;width:40px;height:40px;border:1px solid rgba(254,245,244,.25);border-radius:50%;place-items:center}
 body.on-light header.top .burger{border-color:rgba(23,18,14,.25)}
 .burger i{display:block;width:16px;height:2px;background:currentColor;box-shadow:0 5px 0 currentColor,0 -5px 0 currentColor}
@@ -162,6 +167,17 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 #hero .hl-personagem img{filter:drop-shadow(0 34px 46px rgba(0,0,0,.7)) saturate(1.03)}
 #hero .hl-passaros img{filter:drop-shadow(0 18px 26px rgba(0,0,0,.45))}
 #hero .hl-passaros{animation:heroVoo 13s ease-in-out infinite}
+/* Celular: a cena é horizontal (1920 x 1080) e a tela é vertical. Em "cover"
+   sobra só a faixa central, onde está a personagem; os pássaros, que vivem
+   nas laterais da imagem, ficavam cortados ou de fora. Aqui a camada deles
+   passa a "contain": o PNG inteiro cabe na largura e os dois pássaros voam
+   pequenos no alto, sobre a cabeça dela. As folgas do fundo crescem para o
+   parallax vertical não expor borda. */
+@media (max-width:620px){
+  #hero .hl-passaros img{object-fit:contain;object-position:50% 10%}
+  #hero .far{inset:-16%}
+  #hero .hl-fundo{inset:-12%}
+}
 @keyframes heroVoo{0%,100%{margin-top:0;margin-left:0}25%{margin-top:-14px;margin-left:9px}50%{margin-top:-5px;margin-left:-10px}75%{margin-top:-18px;margin-left:4px}}
 /* luz cênica que acompanha o cursor */
 #hero .luzc{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
@@ -1475,7 +1491,10 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
       const r=i.sec.getBoundingClientRect();
       if(r.bottom<-vh*.4||r.top>vh*1.4)return;
       const p=(r.top+r.height/2-vh/2)/vh;
-      let t="translate3d("+(i.mx?(-i.cx*i.mx).toFixed(1):0)+"px,"+((p*vh*i.f)+(i.mx?-i.cy*i.mx*.55:0)).toFixed(1)+"px,0)";
+      /* em tela estreita o curso vertical cai pela metade: a tela é alta e
+         estreita, e o deslocamento cheio expunha a borda das camadas */
+      const esc=innerWidth<620?.5:1;
+      let t="translate3d("+(i.mx?(-i.cx*i.mx).toFixed(1):0)+"px,"+((p*vh*i.f*esc)+(i.mx?-i.cy*i.mx*.55:0)).toFixed(1)+"px,0)";
       if(i.rot)t+=" rotateY("+(i.cx*i.rot).toFixed(2)+"deg) rotateX("+(-i.cy*i.rot).toFixed(2)+"deg)";
       i.el.style.transform=t;
       if(i.fade)i.el.style.opacity=Math.max(0,1-Math.abs(p)*(i.fadeK||.9)).toFixed(3);});
