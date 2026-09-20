@@ -160,39 +160,37 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 #hero canvas{position:absolute;inset:0;z-index:4;pointer-events:none;width:100%;height:100%}
 #hero .content{position:relative;z-index:5;width:min(1280px,100% - 40px);margin-inline:auto;padding-block:0 clamp(58px,10vh,118px);display:grid;gap:18px;justify-items:start;will-change:transform,opacity}
 /* frase "Era uma vez" */
-/* "Era uma vez": a frase se condensa de uma névoa.
-   Cada palavra nasce larga, desfocada e luminosa, e vai se fechando até
-   ficar nítida. Duas nuvens de bruma passam pela linha, uma à frente das
-   palavras e outra atrás, mais lenta. As cores são as da própria cena
-   (creme quente e o laranja da marca) em alfa baixo e mistura "screen",
-   então a bruma clareia o que está atrás em vez de pintar por cima. */
+/* "Era uma vez": a frase se condensa de uma névoa, versão leve.
+   Só três propriedades são animadas: opacidade, desfoque e deslocamento.
+   Nada de letter-spacing, escala ou text-shadow, que obrigam o navegador
+   a recalcular o layout a cada quadro e faziam a tela travar e o texto
+   parecer crescer. A largura da linha não muda em nenhum momento.
+   A bruma é um degradê já suave, sem filtro de desfoque nem mistura de
+   cores, animado apenas em transform e opacidade: roda no processador
+   gráfico e não pesa. */
 .once{font:400 clamp(15px,1.7vw,22px)/1.5 var(--ft);letter-spacing:.14em;text-transform:uppercase;color:rgba(254,245,244,.92);
   display:flex;flex-wrap:wrap;gap:0 .42em;position:relative;padding-block:2px;isolation:isolate}
-.once span{display:inline-block;opacity:0;filter:blur(22px);transform:translateY(6px) scale(1.14);letter-spacing:.38em;
-  animation:condensa 2.6s cubic-bezier(.2,.65,.2,1) forwards;will-change:filter,transform,opacity}
+.once span{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(5px);
+  text-shadow:0 0 14px rgba(255,236,200,.22);
+  animation:condensa 2.2s cubic-bezier(.2,.65,.2,1) forwards;will-change:opacity,filter,transform}
 @keyframes condensa{
-  0%  {opacity:0;filter:blur(22px);transform:translateY(6px) scale(1.14);letter-spacing:.38em;text-shadow:0 0 0 rgba(255,236,200,0)}
-  30% {opacity:.5;filter:blur(11px);transform:translateY(3px) scale(1.07);letter-spacing:.26em;
-       text-shadow:0 0 26px rgba(255,236,200,.85),0 0 60px rgba(249,178,51,.45)}
-  68% {opacity:.96;filter:blur(1.6px);transform:translateY(0) scale(1.01);letter-spacing:.16em;
-       text-shadow:0 0 18px rgba(255,236,200,.5),0 0 36px rgba(249,178,51,.22)}
-  100%{opacity:1;filter:blur(0);transform:none;letter-spacing:.14em;text-shadow:0 0 12px rgba(255,236,200,.16)}}
-.once .em{color:var(--o2);position:relative}
-.once .em::after{content:"";position:absolute;left:-4%;right:-4%;bottom:-5px;height:1px;background:linear-gradient(90deg,transparent,var(--o2),transparent);opacity:0;animation:underin 1.6s 3s ease forwards}
-@keyframes underin{to{opacity:.85}}
-/* a bruma da frente: nuvem larga que corre à frente das palavras */
-.once::before{content:"";position:absolute;z-index:1;pointer-events:none;top:-160%;bottom:-160%;left:-14%;width:58%;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(255,238,204,.42),rgba(249,178,51,.14) 42%,rgba(249,178,51,0) 72%);
-  filter:blur(18px);mix-blend-mode:screen;opacity:0;transform:translateX(-30%);
-  animation:bruma 4.2s cubic-bezier(.3,0,.2,1) forwards}
-@keyframes bruma{0%{opacity:0;transform:translateX(-30%) scaleY(.8)}18%{opacity:1}
-  70%{opacity:.75;transform:translateX(150%) scaleY(1.15)}100%{opacity:0;transform:translateX(230%) scaleY(1.3)}}
+  0%  {opacity:0;filter:blur(10px);transform:translateY(5px)}
+  45% {opacity:.72;filter:blur(4px);transform:translateY(2px)}
+  100%{opacity:1;filter:blur(0);transform:none}}
+.once .em{color:var(--o2)}
+/* a bruma da frente: uma nuvem clara que corre à frente das palavras */
+.once::before{content:"";position:absolute;z-index:1;pointer-events:none;top:-150%;bottom:-150%;left:-12%;width:54%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(255,238,204,.30),rgba(249,178,51,.09) 40%,rgba(249,178,51,0) 70%);
+  opacity:0;transform:translateX(-30%);will-change:transform,opacity;
+  animation:bruma 4s cubic-bezier(.3,0,.2,1) forwards}
+@keyframes bruma{0%{opacity:0;transform:translateX(-30%)}18%{opacity:1}
+  70%{opacity:.7;transform:translateX(150%)}100%{opacity:0;transform:translateX(230%)}}
 /* a bruma de trás: mais fina, mais lenta, sobe enquanto passa */
-.once::after{content:"";position:absolute;z-index:0;pointer-events:none;top:-120%;bottom:-120%;left:-10%;width:34%;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(255,236,200,.26),rgba(255,236,200,0) 70%);
-  filter:blur(14px);mix-blend-mode:screen;opacity:0;transform:translate(-20%,20%);
-  animation:bruma2 5.2s .5s cubic-bezier(.3,0,.2,1) forwards}
-@keyframes bruma2{0%{opacity:0;transform:translate(-20%,22%)}25%{opacity:.9}100%{opacity:0;transform:translate(300%,-30%)}}
+.once::after{content:"";position:absolute;z-index:0;pointer-events:none;top:-110%;bottom:-110%;left:-8%;width:32%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(255,236,200,.18),rgba(255,236,200,0) 70%);
+  opacity:0;transform:translate(-20%,20%);will-change:transform,opacity;
+  animation:bruma2 5s .5s cubic-bezier(.3,0,.2,1) forwards}
+@keyframes bruma2{0%{opacity:0;transform:translate(-20%,22%)}25%{opacity:.85}100%{opacity:0;transform:translate(300%,-30%)}}
 #hero h1{font-size:clamp(27px,4.3vw,60px);font-weight:900;text-transform:uppercase;line-height:1.02;letter-spacing:-.022em}
 #hero h1>span{display:block;white-space:nowrap;opacity:0;transform:translateY(26px);animation:rise 1.3s cubic-bezier(.2,.7,.2,1) forwards}
 /* o título só sobe quando a névoa já revelou boa parte da frase */
@@ -1845,7 +1843,7 @@ renderAll();connect();
     abre();
     /* quando a entrada termina, a opacidade volta a ser do scroll */
     /* libera a opacidade só depois que a última palavra terminou de se condensar */
-    setTimeout(()=>b.classList.add("heroFim"),5200);
+    setTimeout(()=>b.classList.add("heroFim"),4200);
   });
   addEventListener("scroll",()=>{if(scrollY>40)b.classList.add("rolou");},{passive:true});
 })();
