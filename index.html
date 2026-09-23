@@ -132,7 +132,9 @@ img[src$="corp-arco-baleno.jpg"]{object-position:50% 70%!important} /* palco e b
 img[src$="corp-piticas-zumbi.jpg"]{object-position:44% 26%!important} /* zumbi e criança */
 img[src$="corp-star-wars.jpg"]{object-position:47% 34%!important}  /* Vader, visitante e Chewbacca */
 img[src$="junina-noivos.jpg"]{object-position:50% 30%!important}   /* noiva à esquerda, noivo à direita */
-img[src$="fanta-zumbi.jpg"]{object-position:50% 18%!important}     /* rosto e a lata erguida */
+/* a Fanta foi estendida para a esquerda, já em 16:10: o zumbi fica no lado
+   livre do cartão e a extensão desfocada cai sob o texto */
+img[src$="fanta-zumbi.jpg"]{object-position:50% 50%!important}
 .brand .slot>img{object-position:64% 28%}
 .slot .empty{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;z-index:1;color:rgba(254,245,244,.45);font:500 10.5px/1.5 var(--ft);letter-spacing:.1em;text-transform:uppercase}
 body.can-edit .slot:not(.has) .empty{display:flex}
