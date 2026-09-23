@@ -194,7 +194,10 @@ body.rolou #hero .scrollhint{animation:none;opacity:0;transition:opacity .7s eas
 @media (max-width:620px){
   #hero .hl-passaros img{object-fit:contain;object-position:50% 10%}
   #hero .far{inset:-16%}
-  #hero .hl-fundo{inset:-12%}
+  /* fundo, personagem e pássaros com a mesma sobra: continuam alinhados
+     entre si (as três imagens são recortadas do mesmo quadro 1920 x 1080)
+     e nenhuma borda de caixa aparece quando a rolagem as desloca */
+  #hero .hl-fundo,#hero .hl-personagem,#hero .hl-passaros{inset:-12%}
 }
 @keyframes heroVoo{0%,100%{margin-top:0;margin-left:0}25%{margin-top:-14px;margin-left:9px}50%{margin-top:-5px;margin-left:-10px}75%{margin-top:-18px;margin-left:4px}}
 /* luz cênica que acompanha o cursor */
@@ -1495,7 +1498,11 @@ function goWorld(i){const p=wtrack.children[i];if(!p)return;
   items.forEach(i=>{i.cx=0;i.cy=0;});
   function luzTo(x,y){if(!luz)return;luz.style.setProperty("--lx",(50+x*24).toFixed(1)+"%");luz.style.setProperty("--ly",(40+y*20).toFixed(1)+"%");}
   if(hero){
-    hero.addEventListener("pointermove",e=>{const r=hero.getBoundingClientRect();
+    /* só o mouse move a cena. No celular o dedo também dispara "pointermove",
+       e ao encostar a camada da personagem saltava até o ponto do toque:
+       a borda da caixa dela passava por cima da figura e a cortava. No toque
+       fica só o parallax da rolagem. */
+    hero.addEventListener("pointermove",e=>{if(e.pointerType!=="mouse")return;const r=hero.getBoundingClientRect();
       aX=Math.max(-1,Math.min(1,((e.clientX-r.left)/r.width)*2-1));
       aY=Math.max(-1,Math.min(1,((e.clientY-r.top)/r.height)*2-1));luzTo(aX,aY);tick();},{passive:true});
     hero.addEventListener("pointerleave",()=>{aX=0;aY=0;luzTo(0,0);tick();},{passive:true});
@@ -1744,6 +1751,7 @@ if(location.hash.startsWith("#atracao/")){setTimeout(()=>{start();openAttr(locat
   /* ---------- câmera ---------- */
   let alvoX=0,alvoY=0,camX=0,camY=0,avanco=0,alvoAvanco=0;
   sec.addEventListener("pointermove",e=>{
+    if(e.pointerType!=="mouse")return;   /* no toque a câmera só anda com a rolagem */
     const r=sec.getBoundingClientRect();
     alvoX=Math.max(-1,Math.min(1,((e.clientX-r.left)/r.width)*2-1));
     alvoY=Math.max(-1,Math.min(1,((e.clientY-r.top)/r.height)*2-1));
