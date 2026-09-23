@@ -117,6 +117,22 @@ body.on-light header.top .burger{border-color:rgba(23,18,14,.25)}
 /* a foto da princesa tem o rosto no meio: onde quer que ela apareça,
    o enquadramento é pelo centro, identificado pelo próprio arquivo */
 img[src$="ludico.jpg"],img[src$="pintura-facial.jpg"]{object-position:50% 50%!important}
+/* Ajustes do Paulo (set/2026): ponto de foco de cada foto nova, medido
+   sobre a própria imagem. x e y indicam onde estão os rostos; o recorte
+   quadrado das miniaturas, o 16:10 dos destaques e o 4:3 das fichas
+   partem todos desse ponto. */
+img[src$="hall-monstros.jpg"]{object-position:45% 28%!important}   /* quatro rostos na faixa de cima */
+img[src$="hall-demonio.jpg"]{object-position:52% 38%!important}    /* rosto no centro, chifres acima */
+img[src$="hall-porco.jpg"]{object-position:45% 20%!important}      /* cabeça do porco no alto */
+img[src$="natal-noel-grinch.jpg"]{object-position:50% 6%!important} /* foto vertical: os dois rostos no topo */
+img[src$="natal-duende.jpg"]{object-position:58% 44%!important}    /* duende à direita do centro */
+img[src$="reveillon-casal.jpg"]{object-position:50% 24%!important} /* dois rostos sob as cartolas */
+img[src$="infantil-jack.jpg"]{object-position:32% 22%!important}   /* Jack no terço esquerdo */
+img[src$="corp-arco-baleno.jpg"]{object-position:50% 70%!important} /* palco e bailarinos coloridos */
+img[src$="corp-piticas-zumbi.jpg"]{object-position:44% 26%!important} /* zumbi e criança */
+img[src$="corp-star-wars.jpg"]{object-position:47% 34%!important}  /* Vader, visitante e Chewbacca */
+img[src$="junina-noivos.jpg"]{object-position:50% 30%!important}   /* noiva à esquerda, noivo à direita */
+img[src$="fanta-zumbi.jpg"]{object-position:50% 18%!important}     /* rosto e a lata erguida */
 .brand .slot>img{object-position:64% 28%}
 .slot .empty{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;z-index:1;color:rgba(254,245,244,.45);font:500 10.5px/1.5 var(--ft);letter-spacing:.1em;text-transform:uppercase}
 body.can-edit .slot:not(.has) .empty{display:flex}
@@ -1106,31 +1122,31 @@ const WORLDS=[
  {k:"halloween",n:"Halloween",m:"Outubro · temporada principal",c:"rgba(240,114,58,.24)",led:"#F0723A",
   d:"O território mais forte da Navart. Personagens clássicos do cinema, labirinto do terror, maquiagem de efeitos e ativações que param shoppings e cinemas.",
   hero:"halloween-hero.jpg",go:"sexta-feira-13",
-  fotos:[["sexta-feira-13.jpg","sexta-feira-13"],["labirinto.jpg","patio-dos-horrores"],["hall-balloons.jpg","grandes-estreias"],["case-freira.jpg","grandes-estreias"],["case-annabelle.jpg","grandes-estreias"],["hall-pennywise.jpg","grandes-estreias"],["halloween-juvenil.jpg","sexta-feira-13"],["capitulo-maquiagem.jpg","maquiagem-artistica"],["hall-poster.jpg","patio-dos-horrores"],["case-warner.jpg","grandes-estreias"]]},
+  fotos:[["hall-monstros.jpg","sexta-feira-13"],["labirinto.jpg","patio-dos-horrores"],["hall-porco.jpg","grandes-estreias"],["case-freira.jpg","grandes-estreias"],["case-annabelle.jpg","grandes-estreias"],["hall-demonio.jpg","grandes-estreias"],["halloween-juvenil.jpg","sexta-feira-13"],["capitulo-maquiagem.jpg","maquiagem-artistica"],["hall-poster.jpg","patio-dos-horrores"],["case-warner.jpg","grandes-estreias"]]},
  {k:"natal",n:"Natal",m:"Novembro e dezembro",c:"rgba(214,58,58,.2)",led:"#E24B3F",
   d:"A Parada Natalina sai às ruas com fanfarra, Papai Noel e distribuição de presentes. Em cena fechada, Um Conto de Natal recebe as famílias para fotos.",
   hero:"natal-i.jpg",go:"parada-natalina",
-  fotos:[["natal-ii.jpg","conto-de-natal"],["natal-parada.jpg","parada-natalina"],["natal-conto.jpg","conto-de-natal"],["case-grinch.jpg","conto-de-natal"]]},
+  fotos:[["natal-noel-grinch.jpg","conto-de-natal"],["natal-parada.jpg","parada-natalina"],["natal-conto.jpg","conto-de-natal"],["case-grinch.jpg","conto-de-natal"],["natal-duende.jpg","conto-de-natal"]]},
  {k:"carnaval",n:"Carnaval e Réveillon",m:"Janeiro e fevereiro",c:"rgba(120,86,220,.2)",led:"#9B7BF0",
   d:"Pierrot e Colombina abrem o Carnavart com fanfarra, oficinas e maquiadores. Na virada, o Universo Holográfico traz o figurino espelhado.",
   hero:"carnaval.jpg",go:"carnavart",
-  fotos:[["carnaval-mesa.jpg","carnavart"],["carnaval-arte.jpg","carnavart"],["reveillon.jpg","universo-holografico"],["reveillon-arte.jpg","universo-holografico"],["black-friday.jpg","black-friday"]]},
+  fotos:[["reveillon-casal.jpg","universo-holografico"],["black-friday.jpg","black-friday"]]},
  {k:"geek",n:"Geek e Cinema",m:"O ano inteiro",c:"rgba(58,132,240,.2)",led:"#4FA6F7",
   d:"Darth Vader, Chewbacca, Deadpool, Pantera Negra e os Vingadores em escala real. Personagens que circulam pelo shopping e viram vídeo.",
   hero:"star-wars.jpg",go:"geek-star-wars",
-  fotos:[["herois.jpg","geek-herois"],["case-deadpool.jpg","geek-herois"],["case-vingadores.jpg","geek-herois"],["geek-cinema.jpg","geek-star-wars"],["geek-starbucks.jpg","geek-star-wars"],["geek-sobremesas.jpg","geek-star-wars"],["case-hansolo.jpg","geek-star-wars"],["geek-piticas.jpg","geek-star-wars"],["geek-pantera2.jpg","geek-herois"]]},
+  fotos:[["herois.jpg","geek-herois"],["case-deadpool.jpg","geek-herois"],["case-vingadores.jpg","geek-herois"],["geek-cinema.jpg","geek-star-wars"],["geek-starbucks.jpg","geek-star-wars"],["geek-sobremesas.jpg","geek-star-wars"],["case-hansolo.jpg","geek-star-wars"]]},
  {k:"infantil",n:"Infantil e Lúdico",m:"O ano inteiro",c:"rgba(240,150,190,.2)",led:"#F58CBB",
   d:"Princesas, bichos e fantoches para receber as crianças. Pintura facial, recreação e monitoria com equipe própria.",
   hero:"ludico.jpg",go:"pintura-facial",
-  fotos:[["pintura-facial.jpg","pintura-facial"],["fantoches.jpg","cada-conto-conta"],["safari.jpg","safari-pets"],["pets.jpg","safari-pets"],["alice.jpg","cada-conto-conta"],["infantil-princesa.jpg","pintura-facial"]]},
+  fotos:[["pintura-facial.jpg","pintura-facial"],["fantoches.jpg","cada-conto-conta"],["safari.jpg","safari-pets"],["pets.jpg","safari-pets"],["alice.jpg","cada-conto-conta"],["infantil-princesa.jpg","pintura-facial"],["infantil-jack.jpg","cada-conto-conta"]]},
  {k:"corporativo",n:"Corporativo e Marcas",m:"O ano inteiro",c:"rgba(249,178,51,.2)",led:"#F9B233",
   d:"Pirofagia e performance na abertura, exposições temáticas para o mall e maquiagem para a equipe e os convidados da empresa.",
-  hero:"fmt-corporativo.jpg",go:"mundo-marinho",
-  fotos:[["mundo-marinho.jpg","mundo-marinho"],["dinossauros.jpg","patio-dinossauros"],["maquiagem-staff.jpg","maquiagem-artistica"],["piticas-zumbi.jpg","geek-star-wars"],["circenses-fogo.jpg","mundo-marinho"],["circenses-banner.jpg","mundo-marinho"]]},
+  hero:"corp-arco-baleno.jpg",go:"mundo-marinho",
+  fotos:[["mundo-marinho.jpg","mundo-marinho"],["dinossauros.jpg","patio-dinossauros"],["maquiagem-staff.jpg","maquiagem-artistica"],["corp-piticas-zumbi.jpg","geek-star-wars"],["circenses-fogo.jpg","mundo-marinho"],["corp-star-wars.jpg","geek-star-wars"]]},
  {k:"pascoa",n:"Páscoa e Junina",m:"Março a julho",c:"rgba(120,200,140,.2)",led:"#6FCE93",
   d:"O coelho e os personagens de época na Páscoa. No meio do ano, o Arraiart leva quadrilha, barraca do amor e correio elegante.",
   hero:"pascoa.jpg",go:"pascoa",
-  fotos:[["pascoa-fondue.jpg","pascoa"],["festa-junina.jpg","arraiart"],["festa-julina.jpg","arraiart"],["junina-grupo.jpg","arraiart"],["junina-arte.jpg","arraiart"]]}
+  fotos:[["pascoa-fondue.jpg","pascoa"],["festa-junina.jpg","arraiart"],["festa-julina.jpg","arraiart"],["junina-grupo.jpg","arraiart"],["junina-noivos.jpg","arraiart"]]}
 ];
 const CAL=[
  {k:"jan",m:0,mes:"Janeiro",n:"Réveillon e Futurista",d:"Universo Holográfico: personagens futuristas espelhados para a virada e festas de gala.",open:"universo-holografico"},
@@ -1156,7 +1172,7 @@ const BRANDS=[
  {logo:"logo-cinemark.jpg",slot:"geek-pantera2.jpg",n:"Cinemark",p:"Pantera Negra, O Grinch e Han Solo nas estreias do Shopping D e do Metrô Tucuruvi.",keep:true},
  {logo:"logo-piticas.jpg",slot:"geek-piticas",n:"Piticas",p:"The Walking Dead e Star Wars no lançamento das coleções de camisetas."},
  {logo:"logo-shell-open-air.jpg",slot:"hall-balloons",n:"Shell Open Air",p:"O palhaço de IT no maior cinema a céu aberto do país, no Jockey Club."},
- {logo:"logo-fanta.jpg",slot:"fanta-beetlejuice.jpg",n:"Fanta",p:"Beetlejuice na ativação de estreia do filme, com o painel da campanha ao fundo."},
+ {logo:"logo-fanta.jpg",slot:"fanta-zumbi.jpg",n:"Fanta",p:"O zumbi da ativação Fanta Mistério, com as latas da edição na mão."},
  {logo:"logo-coca-cola.png",slot:"coca-fantasmas.jpg",n:"Coca-Cola",p:"Fantasmas Divertidos é campanha da Coca-Cola. A caracterização dos três personagens foi da Navart."}
 ];
 const LOGOS=["logo-unimed","logo-coca-cola","logo-3m","logo-objetivo","logo-apsen","logo-morumbi-town-shopping","logo-granja-vianna-shopping","logo-metro-tucuruvi-shopping","logo-d-shopping","logo-cine-araujo","logo-deck-beach","logo-folks-pub","logo-urla","logo-atletica-araras","logo-edub-two","logo-festa-julina-de-sorocaba"];
